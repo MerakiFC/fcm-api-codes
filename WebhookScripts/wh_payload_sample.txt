@@ -1,0 +1,75 @@
+{
+"version": "0.1",
+"sharedSecret": "{{sharedSecret}}",
+"sentAt": "{{sentAt}}",
+"organizationId": "{{organizationId}}",
+"organizationName": "{{organizationName}}",
+"organizationUrl": "{{organizationUrl}}",
+"networkId": "{{networkId}}",
+"networkName": "{{networkName}}",
+"networkUrl": "{{networkUrl}}",
+"networkTags": {{ networkTags | jsonify }},
+"deviceSerial": "{{deviceSerial}}",
+"deviceMac": "{{deviceMac}}",
+"deviceName": "{{deviceName}}",
+"deviceUrl": "{{deviceUrl}}",
+"deviceTags": {{ deviceTags | jsonify }},
+"deviceModel": "{{deviceModel}}",
+"alertId": "{{alertId}}",
+"alertType": "{{alertType}}",
+"alertTypeId": "{{alertTypeId}}",
+"alertLevel": "{{alertLevel}}",
+"occurredAt": "{{occurredAt}}",
+"alertData": {{ alertData | jsonify }}
+}
+
+
+{% assign content = 
+"## Heading 2\n
+\nThis is some **bold** and *italic* text.\n
+\n- List item 1\n- List item 2\n
+\n[Visit OpenAI](https://openai.com/)" %}
+
+
+{
+  "markdown": "## {{alertType}}\n
+                Alert ID: {{alertId}}\n
+                Alert level: {{alertLevel}}\n
+                Occurred at: {{occurredAt}}\n
+                Organization name: [{{organizationName}}]({{organizationUrl}})\n
+                Organization ID: {{organizationId}}\n
+                Network name: [{{networkName}}]({{networkUrl}})\n
+                Network ID: {{networkId}}\n
+                Network Tags: {{networkTags | join: ', '}}\n
+                Device name: {{deviceName}}\n
+                Device serial: [{{deviceSerial}}]({{deviceUrl}})\n
+                Device MAC: {{deviceMac}}\n
+                Device tags: {{deviceTags | join: ', '}}\n
+                Device model: {{deviceModel}}\n
+                **Alert Data** {{ alertData | markdown_with_additional_formatting_for_webex }}\n"
+}
+
+https://drive.google.com/uc?export=view&id=1M4rInwkcHWStSSf37uZVrIAt3IWez9Gd
+
+{
+            "type": "FactSet",
+            "facts": [
+                {
+                    "title": "Board:",
+                    "value": "Buttons and Cards"
+                },
+                {
+                    "title": "List:",
+                    "value": "Backlog"
+                },
+                {
+                    "title": "Assigned to:",
+                    "value": "Carmen Harrison"
+                },
+                {
+                    "title": "Due date:",
+                    "value": "Feb 25, 2020"
+                }
+            ],
+            "separator":"true"
+}
