@@ -7,7 +7,7 @@ def handle_webhook():
     payload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print(payload)
-    return 'Webhook Received', 200
+    return 'OK ', 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=0.0.0.0, port=8000, debug=True)
