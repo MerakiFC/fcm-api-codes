@@ -4,18 +4,18 @@ import mvtask
 app = Flask(__name__)
 
 @app.route('/whtest', methods=['POST'])
-def handle_webhook():
+def test_only():
     payload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print(payload)
-    return "OK \n", 200
+    return "200OK \n", 200
 
 
-@app.route('/mvmotion', methods=['POST'])
-def handle_webhook():
+@app.route('/mvmotionalert', methods=['POST'])
+def mv_task():
     objPayload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
-    print(objPayloadayload)
+    print(objPayload)
     return "200OK \n", 200
 
 
