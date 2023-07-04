@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-envFile = "../devEnv/FCMToken.env"
+envFile = "../devEnv/apiParams.env"
 
 load_dotenv(dotenv_path=envFile)
 
