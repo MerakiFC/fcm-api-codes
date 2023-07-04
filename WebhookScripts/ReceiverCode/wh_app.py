@@ -15,9 +15,10 @@ def test_only():
 def mv_task():
     objPayload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
-    print(objPayload)
+    #print(objPayload)
+    urlSnap = mvtask.getsnapshot(objPayload)
+    print (urlSnap.text)
     return "200OK \n", 200
-
 
 
 if __name__ == '__main__':

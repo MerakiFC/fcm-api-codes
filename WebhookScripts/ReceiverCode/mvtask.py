@@ -13,6 +13,7 @@ def getsnapshot():
     load_dotenv(dotenv_path=envFile)
     strTimestamp = payload["occurredAt"]
     urlSnap = urlMerakiAPI + "/devices/" + payload["deviceSerial"] + "/camera/GenerateSnapshot"
+    return (urlSnap)
 """
     payload = json.dumps({
         "timestamp": strTimestamp,
@@ -26,7 +27,9 @@ def getsnapshot():
     response = requests.request("POST", urlSnap, headers=headers, data=payload)
     print(response.text)
     return (response.text)
-"""
+
 #Handling motion alert payload
 def motionalert():
     return "json object"
+
+"""
