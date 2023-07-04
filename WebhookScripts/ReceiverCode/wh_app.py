@@ -16,7 +16,6 @@ def handle_webhook():
     objPayload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print(objPayloadayload)
-
     return "200OK \n", 200
 
 
