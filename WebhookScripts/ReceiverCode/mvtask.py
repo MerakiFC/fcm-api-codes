@@ -9,10 +9,10 @@ envFile = "../devEnv/apiParams.env"
 urlMerakiAPI = "https://api.meraki.com/api/v1"
 
 #Generate Snapshot from input timestamp (in ISO-8601 format)
-def getsnapshot():
+def getsnapshot(objWebhook):
     load_dotenv(dotenv_path=envFile)
-    strTimestamp = payload["occurredAt"]
-    urlSnap = urlMerakiAPI + "/devices/" + payload["deviceSerial"] + "/camera/GenerateSnapshot"
+    strTimestamp = objPayload["occurredAt"]
+    urlSnap = urlMerakiAPI + "/devices/" + objWebhook["deviceSerial"] + "/camera/GenerateSnapshot"
     return (urlSnap)
 """
     payload = json.dumps({
