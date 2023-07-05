@@ -11,7 +11,7 @@ urlMerakiAPI = "https://api.meraki.com/api/v1"
 #Generate Snapshot from input timestamp (in ISO-8601 format)
 def getsnapshot(objWebhook):
     load_dotenv(dotenv_path=envFile)
-    strTimestamp = objPayload["occurredAt"]
+    strTimestamp = objWebhook["occurredAt"]
     urlSnap = urlMerakiAPI + "/devices/" + objWebhook["deviceSerial"] + "/camera/GenerateSnapshot"
     return (urlSnap)
 """
