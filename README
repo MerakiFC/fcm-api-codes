@@ -1,1 +1,11 @@
-initialize
+--FCM Project Log--
+
+Components:
+    1. Webhook receiver
+    2. MV Task Scripts
+    3. API Connectivity Test Script
+
+Dependency Requirement:
+    1. APIParams.env file on ../devEnv sub-directory
+    2. To follow: create requirements.txt file
+    

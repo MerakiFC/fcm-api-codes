@@ -1,5 +1,4 @@
 from flask import Flask, request
-import mvtask
 
 app = Flask(__name__)
 
@@ -13,6 +12,7 @@ def test_only():
 
 @app.route('/mvmotionalert', methods=['POST'])
 def mv_task():
+    import mvtask
     objPayload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     #print(objPayload)
