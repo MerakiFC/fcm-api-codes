@@ -17,7 +17,7 @@ def mv_task():
     # Process the payload and perform necessary actions
     #print(objPayload)
     urlSnap = mvtask.getsnapshot(objPayload)
-    print (urlSnap.text)
+    print (urlSnap)
     return urlSnap + "\n 200OK \n", 200
 
 
