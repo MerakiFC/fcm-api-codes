@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 def envTest():
-    envFile = "../devEnv/apiParams.env"
+    envFile = "apiParams.env"
     if os.path.exists(envFile):
         load_dotenv(dotenv_path=envFile)
         print(".env File found\n")
@@ -11,5 +11,5 @@ def envTest():
         print("Webex API URL = ", os.getenv("WX_API_URL"))
     
     else:
-        print("apiParams.env file not found.\nConfirm file is in ../devEnv/ sub-directory.")
+        print("apiParams.env file not found.\nConfirm file is created.")
         return ".env Missing"

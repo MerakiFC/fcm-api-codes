@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 global urlMerakiAPI
 global envFile
 
-envFile = "../devEnv/apiParams.env"
+envFile = "apiParams.env"
 urlMerakiAPI = "https://api.meraki.com/api/v1"
 
 #Generate Snapshot from input timestamp (in ISO-8601 format)
@@ -14,7 +14,6 @@ def getsnapshot(objWebhook):
     strTimestamp = objWebhook["occurredAt"]
     urlSnap = urlMerakiAPI + "/devices/" + objWebhook["deviceSerial"] + "/camera/GenerateSnapshot"
     return (urlSnap)
-"""
     payload = json.dumps({
         "timestamp": strTimestamp,
         "fullframe": "false"
@@ -31,5 +30,3 @@ def getsnapshot(objWebhook):
 #Handling motion alert payload
 def motionalert():
     return "json object"
-
-"""
