@@ -4,6 +4,7 @@ app = Flask(__name__)
 
 @app.route('/whtest', methods=['POST'])
 def test_only():
+    import apiConn
     payload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print(payload)
