@@ -1,0 +1,6 @@
+*.log
+*.env
+WebhookScripts/Guides/
+WebhookScripts/*.json
+WebhookScripts/ReceiverCode/__pycache__/
+wh_rcvr/
