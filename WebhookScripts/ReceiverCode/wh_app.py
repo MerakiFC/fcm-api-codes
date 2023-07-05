@@ -18,7 +18,7 @@ def mv_task():
     #print(objPayload)
     urlSnap = mvtask.getsnapshot(objPayload)
     print (urlSnap.text)
-    return "200OK \n", 200
+    return urlSnap + "\n 200OK \n", 200
 
 
 if __name__ == '__main__':
