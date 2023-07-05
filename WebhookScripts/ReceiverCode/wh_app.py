@@ -8,8 +8,8 @@ def test_only():
     payload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print ("Testing Connection...")
-    envTest()
-    return "\n 200OK \n", 200, (payload)
+    print(envTest())
+    return "\n 200OK \n" + (payload), 200
 
 
 @app.route('/mvmotionalert', methods=['POST'])
