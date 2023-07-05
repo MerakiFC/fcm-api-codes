@@ -12,3 +12,4 @@ def envTest():
     
     else:
         print("apiParams.env file not found.\nConfirm file is in ../devEnv/ sub-directory.")
+        return ".env Missing"

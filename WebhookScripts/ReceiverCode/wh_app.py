@@ -9,8 +9,7 @@ def test_only():
     # Process the payload and perform necessary actions
     print ("Testing Connection...")
     envTest()
-    return (payload)
-    return "\n 200OK \n", 200
+    return "\n 200OK \n", 200, (payload)
 
 
 @app.route('/mvmotionalert', methods=['POST'])
