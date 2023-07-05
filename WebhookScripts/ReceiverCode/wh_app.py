@@ -8,7 +8,7 @@ def test_only():
     payload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print ("Testing Connection...")
-    print (envTest())
+    envTest()
     return (payload), 200
 
 
