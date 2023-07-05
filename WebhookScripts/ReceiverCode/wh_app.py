@@ -7,7 +7,9 @@ def test_only():
     payload = request.get_json()  # Get the JSON payload from the request
     # Process the payload and perform necessary actions
     print(payload)
-    return "200OK \n", 200
+    apiConn()
+    print ("Testing Connection...")
+    return "\n 200OK \n", 200
 
 
 @app.route('/mvmotionalert', methods=['POST'])
