@@ -6,7 +6,7 @@ Components:
     3. API Connectivity Test Script
 
 Dependency Requirement:
-    1. APIParams.env file on ../devEnv sub-directory
+    1. apiParams.env file on apiEnv/ sub-directory
     2. To follow: create requirements.txt file
 
 
