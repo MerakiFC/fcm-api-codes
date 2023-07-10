@@ -8,4 +8,9 @@ Components:
 Dependency Requirement:
     1. APIParams.env file on ../devEnv sub-directory
     2. To follow: create requirements.txt file
+
+
+Idea Board:
+    1. Use a third party webhook receiver as a middleware. (idea: use Hookdeck or similar)
+        **Meraki webhooks only support https receivers
     
