@@ -15,15 +15,16 @@ def envTest():
         print("ORG ID = ", os.getenv("FCM_ORG_ID"))
         print("Webex API URL = ", os.getenv("WX_API_URL"))
     else:
-        print("Working env not set.\nCheck file exists or in proper directory.\n\nTerminating.\n")
+        print("Working env not set.\n")
         exit()
 
 
-def getMerakiAPIKey():
+def getEnvKey(keyName):
     if os.path.exists(envFile):
         load_dotenv(dotenv_path=envFile)
-        apiKey = os.getenv("FCM_API_KEY")
-        return apiKey
+        envKey = os.getenv(keyName)
+        return envKey
     else:
-        print("Env file not found")
+        print(keyName + " not found")
         exit()
+

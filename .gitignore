@@ -5,4 +5,5 @@ WebhookScripts/Guides/
 WebhookScripts/Payload/
 WebhookScripts/*.json
 WebhookScripts/ReceiverCode/__pycache__/
+WebhookScripts/ReceiverCode/snaps/
 wh_rcvr/
