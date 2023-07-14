@@ -25,25 +25,18 @@ def mv_task():
     strTimeISO = str(epochToAest(whPayload["alertData"]["timestamp"]))
     print("Webhook received: ",strTimeISO,"\nStart process.")
 
+
     ##Process the payload and perform necessary actions
 
     try:
         urlSnap = mvtask.getSnap(whPayload)
     except Exception as err:
         print("Snapshot processing error:\n", str(err))
-        return 400
         sys.exit(400)
-    #print (urlSnap)
-    
+    print (urlSnap)
 
-    try:
-        sendToWX(whPayload)
-    except Exception as err:
-        print('Error sending message to WX:',str(err))
-        return 400
-        sys.exit(400)
-
-    return "200OK", 200
+    sendToWX(whPayload)
+    return "OK", 200
 
 
 

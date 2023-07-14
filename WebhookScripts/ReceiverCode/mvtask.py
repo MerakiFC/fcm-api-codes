@@ -10,13 +10,13 @@ envFile = "apiEnv/apiParams.env"
 urlMerakiAPI = "https://api.meraki.com/api/v1"
 
 ##Check if file exists, otherwise, download and save as strTimestamp entry
-def chkSnapImg(urlReturn, strTimestamp):    
+def chkSnapImg(urlReturn, strTimeEpoch):    
     fileDir = "snaps"     #declare snaps/ sub-directory
-    fileName = (strTimestamp + ".jpg")
+    fileName = (strTimeEpoch + ".jpg")
     filePath = os.path.join(fileDir, fileName)
     
     ##Print message check if file exists
-    print("Checking: "+ os.path.abspath(filePath))
+    print("Checking for "+ os.path.abspath(filePath))
 
     if os.path.exists(filePath):
         print ("Warning: " + fileName + " exists in "+ fileDir +" directory.\nExiting.")
@@ -25,21 +25,29 @@ def chkSnapImg(urlReturn, strTimestamp):
     else:
         print("Attempting to download and save snapshot.")
         
+        #initiate file dl request
         try:
-            rxResponse = requests.get(str(urlReturn), stream=True) #initiate file request
-            rxResponse.raise_for_status()
+            rxResponse = requests.get(urlReturn, stream=True)
+            if rxResponse.status_code == 200:
+                with open(filePath, 'wb') as file:
+                    for chunk in rxResponse.iter_content(chunk_size=8192):
+                        file.write(chunk)
+                print("Success! Snapshot saved as " + fileName)
+            else:
+                print("Error "+ str(rxResponse.status_code) + ". Snapshot download failed.")
+                print(rxResponse.status_code)
+                sys.exit(rxResponse.status_code)
+        
+        except Exception as err:
+            print("\n---\nchkSnapImg request failed\n---\n", str(err))
+            sys.exit(1)
+        
+        '''
         except requests.exceptions.RequestException as err:
-            print ("---\nchkSnapImg failed\n---\n", str(err))
+            print ("\n---\nchkSnapImg request failed\n---\n", str(err))
             sys.exit(400)
+            '''
 
-        if rxResponse.status_code == 200:
-            with open(filePath, 'wb') as file:
-                for chunk in response.iter_content(chunk_size=8192):
-                    file.write(chunk)
-            print("Success! Snapshot saved as " + fileName)
-        else:
-            print("Error "+ str(response.status_code) + ". Snapshot download failed.")
-            exit()
 
 
 ##Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
@@ -48,29 +56,29 @@ def getSnap(whPayload):
     load_dotenv(dotenv_path=envFile)
     apiKey = getEnvKey("FCM_API_KEY")
 
-    strTimeISO = whPayload["occurredAt"]
+    dtOccAtISO = whPayload["occurredAt"]
     urlGenSnap = (urlMerakiAPI + "/devices/" + whPayload["deviceSerial"] 
                     + "/camera/generateSnapshot")
 
     txPayload = json.dumps({
-        "timestamp": strTimeISO,
+        "timestamp": dtOccAtISO,
         "fullframe": "false"
         })
     txHeaders = {
         'X-Cisco-Meraki-API-Key': apiKey,
         'Content-Type': 'application/json'
         }
-    
-    ##send request action
+    print("Generating snapshot...")
+    ##send getSnap request action
     try:
         rxResponse = requests.post(urlGenSnap, headers=txHeaders, data=txPayload)
-        rxResponse.raise_for_status()
     except requests.exceptions.RequestException as err:
         print ("---\nFailed to generate snapshot\n---\n", str(err))
         sys.exit(400)
     
-    rxJResponse = rxResponse.json()
+
     ##Extract url string from response
+    rxJResponse = rxResponse.json()
     urlReturn = rxJResponse["url"]
 
     ##Normalize alertData["timestamp"] to int

@@ -1,5 +1,6 @@
 import os, sys, json, requests
 from dotenv import load_dotenv
+from requests_toolbelt import MultipartEncoder as mp_enc
 from dtConvert import epochToAest
 from apiEnv import getEnvKey
 from mvtask import mvVidLink
@@ -17,7 +18,7 @@ def sendToWX(whPayload):
     strTimeEpoch = (str(int(whPayload["alertData"]["timestamp"])))
 
     #Convert ISO8601 occurredAt time to AEST string
-    strOccAtAest = str(epochToAest((whPayload["alertData"]["timestamp"])//1))
+    strOccAtAest = (str(epochToAest(int(strTimeEpoch))))
 
     #Get videolink and assign to vidUrl
     vidUrl = mvVidLink(whPayload)
