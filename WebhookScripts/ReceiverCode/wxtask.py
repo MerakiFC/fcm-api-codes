@@ -33,7 +33,10 @@ def sendToWX(whPayload):
         sys.exit(400)
 
     ##Initiate empty string on whPayload["alertData"]["imageUrl"]
-    whPayload["alertData"]["imageUrl"] = ("https://dashboard.meraki.com")
+    if (whPayload["alertData"]["imageUrl"]) is null:
+        whPayload["alertData"]["imageUrl"] = ("https://dashboard.meraki.com")
+    else:
+        continue
 
     #Create markdown string for transmit payload
     txMdBody = (
