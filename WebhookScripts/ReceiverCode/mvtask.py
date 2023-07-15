@@ -24,9 +24,10 @@ def chkSnapFile(strTimestampEpoch):
     if os.path.exists(filePath):
         print ("Warning: " + fileName + " exists in "+ fileDir 
         +" directory.")
-        return (1)
+        return
     else:
         print(fileName," not found. Proceeding...")
+        return (0)
 
 
 
