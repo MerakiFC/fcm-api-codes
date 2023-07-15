@@ -61,7 +61,10 @@ def sendToWX(whPayload):
         'Authorization': 'Bearer '+ wxToken
         })
 
-    ##Action:Post to Webex
+    ##Action:Post to Webex and return response code
     response = requests.post(urlWxApi, headers=txHeaders, data=mpTxPayload)
-    print(response.text)
-    return response.status_code
+    print (response.status_code)
+    
+    ##Feedback: print response body
+    dictResponse = response.json()
+    print("Message sent: ", dictResponse["created"], " (UTC)")
