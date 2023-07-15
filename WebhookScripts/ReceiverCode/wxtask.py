@@ -58,7 +58,7 @@ def sendToWX(whPayload):
     
     txHeaders = ({
         'Content-Type': mpTxPayload.content_type,
-        'Authorization': 'Bearer '+ wxToken
+        'Authorization': 'Bearer '+ str(wxToken)
         })
 
     ##Action:Post to Webex
