@@ -19,7 +19,7 @@ def chkSnapFile(strTimestampEpoch):
     filePath = os.path.join(fileDir, fileName)
     
     ##Print message check if file exists
-    print("Action: Check for existing image file...\n"+ os.path.join(os.getcwd() + filePath))
+    print("Action: Check for existing image file...\n"+ os.path.join(os.getcwd(), filePath))
 
     if os.path.exists(filePath):
         print ("Warning: " + fileName + " exists in "+ fileDir 
