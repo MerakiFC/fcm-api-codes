@@ -10,7 +10,7 @@ apiKey = getEnvKey("FCM_API_KEY")
 urlMerakiAPI = getEnvKey("MERAKI_API_URL")
 urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_BOT_TOKEN")
-wxRoomId = getEnvKey("FCM_ROOM_ID")
+wxRoomId = getEnvKey("WX_ROOM_ID")
 
 def sendToWX(whPayload):
 
@@ -58,10 +58,10 @@ def sendToWX(whPayload):
     
     txHeaders = ({
         'Content-Type': mpTxPayload.content_type,
-        'Authorization': 'Bearer '+ str(wxToken)
+        'Authorization': 'Bearer '+ wxToken
         })
 
     ##Action:Post to Webex
     response = requests.post(urlWxApi, headers=txHeaders, data=mpTxPayload)
-    #print(response.status_code)
+    print(response.text)
     return response.status_code
