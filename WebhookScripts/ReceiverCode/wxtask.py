@@ -12,36 +12,37 @@ urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_BOT_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
 
-def sendToWX(whPayload):
+def sendToWX(dictWhPayload):
 
     #normalize epoch timestamp to string
-    strTimeEpoch = (str(int(whPayload["alertData"]["timestamp"])))
+    strTimestampEpoch = (str(int(dictWhPayload["alertData"]["timestamp"])))
 
     #Convert ISO8601 occurredAt time to AEST string
-    strOccAtAest = (str(epochToAest(int(strTimeEpoch))))
+    strTimestampAEST = (str(epochToAest(int(strTimestampEpoch))))
 
     #Get videolink and assign to vidUrl
-    vidUrl = mvVidLink(whPayload)
+    vidUrl = mvVidLink(dictWhPayload)
 
     ## Open image(.jpg) for attachment
     try:
-        imgFilePath = ("snaps/" + strTimeEpoch + ".jpg")
+        imgFilePath = ("snaps/" + strTimestampEpoch + ".jpg")
         with open(imgFilePath, "rb") as image:
             imgAttach = image.read()
+            print("Attaching image: ", strTimestampEpoch+".jpg")
     except Exception as err:
         print ("File read error: " + str(err))
         sys.exit(400)
 
-    ##Initiate empty string on whPayload["alertData"]["imageUrl"]
-    if (whPayload["alertData"]["imageUrl"]) is None:
-        whPayload["alertData"]["imageUrl"] = ("https://dashboard.meraki.com")
+    ##Initiate empty string on dictWhPayload["alertData"]["imageUrl"]
+    if (dictWhPayload["alertData"]["imageUrl"]) is None:
+        dictWhPayload["alertData"]["imageUrl"] = ("https://dashboard.meraki.com")
 
     #Create markdown string for transmit payload
     txMdBody = (
-        "### " + whPayload['alertType'] + " on: " + whPayload['deviceName'] 
-        + "\n* Occurred at: **" + strOccAtAest + "**"
+        "### " + dictWhPayload['alertType'] + " on: " + dictWhPayload['deviceName'] 
+        + "\n* Video timestamp: **" + strTimestampAEST + "**"
         + "\n* Video Link: " + vidUrl
-        + "\n* Meraki attachment: [image](" + whPayload["alertData"]["imageUrl"] +")"
+        + "\n* Meraki attachment: [image](" + dictWhPayload["alertData"]["imageUrl"] +")"
         )
     
     #Mid-run feedback
@@ -51,9 +52,9 @@ def sendToWX(whPayload):
     
     mpTxPayload = mp_enc({
                 "roomId": str(wxRoomId),
-                "text": (whPayload["alertType"] + " from " + whPayload["deviceName"]),
+                "text": (dictWhPayload["alertType"] + " from " + dictWhPayload["deviceName"]),
                 "markdown": txMdBody,
-                "files": ((strTimeEpoch +'.jpg'), imgAttach, 'image/jpg')
+                "files": ((strTimestampEpoch +'.jpg'), imgAttach, 'image/jpg')
                 })
     
     txHeaders = ({

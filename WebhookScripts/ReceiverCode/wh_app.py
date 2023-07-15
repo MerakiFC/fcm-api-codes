@@ -7,11 +7,11 @@ app = Flask(__name__)
 @app.route('/whtest', methods=['POST'])
 def test_only():
     from apiConn import envTest
-    whPayload = request.get_json()  # Get the JSON payload from the request
+    dictWhPayload = request.get_json()  # Get the JSON payload from the request
 
     print ("Testing Connection...")
     envTest()
-    return (whPayload), 200
+    return (dictWhPayload), 200
 
 
 @app.route('/mvmotionalert', methods=['POST'])
@@ -21,21 +21,21 @@ def mv_task():
     from wxtask import sendToWX
     from dtConvert import epochToAest
     
-    whPayload = request.get_json()  # Get the JSON payload from the request
-    strTimeISO = str(epochToAest(whPayload["alertData"]["timestamp"]))
-    print("Webhook received: ",strTimeISO,"\nStart process.")
+    dictdictWhPayload = request.get_json()  # Get the JSON payload from the request
+    strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
+    print("Webhook timestamp: ",strTimestampAEST,"\nStarting process...")
 
 
     ##Process the payload and perform necessary actions
 
     try:
-        urlSnap = mvtask.getSnap(whPayload)
+        urlSnap = mvtask.getSnap(dictWhPayload)
     except Exception as err:
         print("Snapshot processing error:\n", str(err))
         sys.exit(400)
-    print (urlSnap)
+    
 
-    sendToWX(whPayload)
+    sendToWX(dictWhPayload)
     return "OK", 200
 
 
