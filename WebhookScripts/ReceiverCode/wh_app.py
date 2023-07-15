@@ -21,7 +21,7 @@ def mv_task():
     from wxtask import sendToWX
     from dtConvert import epochToAest
     
-    dictdictWhPayload = request.get_json()  # Get the JSON payload from the request
+    dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
     print("Webhook timestamp: ",strTimestampAEST,"\nStarting process...")
 
