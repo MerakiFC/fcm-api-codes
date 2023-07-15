@@ -50,7 +50,7 @@ def sendToWX(whPayload):
     ##Build payload multipart attachment and transmit headers
     
     mpTxPayload = mp_enc({
-                "roomId": wxRoomId,
+                "roomId": str(wxRoomId),
                 "text": (whPayload["alertType"] + " from " + whPayload["deviceName"]),
                 "markdown": txMdBody,
                 "files": ((strTimeEpoch +'.jpg'), imgAttach, 'image/jpg')
