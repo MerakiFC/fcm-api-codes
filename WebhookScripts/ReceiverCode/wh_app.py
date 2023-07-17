@@ -29,13 +29,13 @@ def mv_task():
     ##Process the payload and perform necessary actions
 
     try:
-        urlSnap = mvtask.getSnap(dictWhPayload)
+        mvtask.getSnap(dictWhPayload, isRecap="y")
     except Exception as err:
         print("Snapshot processing error:\n", str(err))
-        sys.exit(400)
+        sys.exit(500)
     
 
-    sendToWX(dictWhPayload)
+    sendToWX(dictWhPayload, isRecap="y")
     return "OK", 200
 
 

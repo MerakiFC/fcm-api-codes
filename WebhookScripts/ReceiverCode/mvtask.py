@@ -10,39 +10,49 @@ envFile = "apiEnv/apiParams.env"
 urlMerakiAPI = "https://api.meraki.com/api/v1"
 
 ##Check if file exists, otherwise, download and save as strTimestamp entry
-def chkSnapFile(strTimestampEpoch):    
+def chkSnapFile(strTimestampEpoch, isRecap=""):    
     
     #declare snaps/ sub-directory
     fileDir = "snaps"
+    
     #declare filename and path
-    fileName = (strTimestampEpoch + ".jpg")
+    if isRecap == "y":
+        fileName = (strTimestampEpoch + "-recap.jpg")
+    else:
+        fileName = (strTimestampEpoch + ".jpg")
+    
     filePath = os.path.join(fileDir, fileName)
     
     ##Print message check if file exists
-    print("Action: Check for existing image file...\n"+ os.path.join(os.getcwd(), filePath))
+    print("Action: Check existing image file...\n"+ os.path.join(os.getcwd(), filePath))
 
     if os.path.exists(filePath):
         print ("Warning: " + fileName + " exists in "+ fileDir 
         +" directory.")
-        return
+        return (1)
     else:
         print(fileName," not found. Proceeding...")
         return (0)
 
 
 
-def getImgFile(urlReturn, strTimestampEpoch):
+def getImgFile(urlImage, strTimestampEpoch, isRecap=""):
 
     print("Action: Download and save snapshot.")
 
     #declare snaps/ sub-directory
     fileDir = "snaps"
+    
     #declare filename and path
-    fileName = (strTimestampEpoch + ".jpg")
+    if isRecap == "y":
+        fileName = (strTimestampEpoch + "-recap.jpg")
+    else:
+        fileName = (strTimestampEpoch + ".jpg")    
+    
     filePath = os.path.join(fileDir, fileName)    
 
     #initiate file dl request
-    rxResponse = requests.get(urlReturn, stream=True)
+    rxResponse = requests.get(urlImage, stream=True)
     if rxResponse.status_code == 200:
         with open(filePath, 'wb') as file:
             for chunk in rxResponse.iter_content(chunk_size=8192):
@@ -57,14 +67,29 @@ def getImgFile(urlReturn, strTimestampEpoch):
 
 
 ##Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
-def getSnap(dictWhPayload):
+def getSnap(dictWhPayload, isRecap=""):
 
     ##Normalize alertData["timestamp"] to int
     strTimestampEpoch = (str(int(dictWhPayload["alertData"]["timestamp"])))
+    
     ##Call chkSnapFile function to see if snapshot already exists
-    fileCheck = chkSnapFile(strTimestampEpoch)
+    if isRecap == "y":
+        print("Using motion recap image.")
+    else:
+        print("Using default snapshot option.")
+    
+    fileCheck = chkSnapFile(strTimestampEpoch, isRecap=isRecap)
 
-    if fileCheck == 0:
+    ##Download and save recap image if isRecap == "y"
+    if (fileCheck == 0 and isRecap=="y"):
+        
+        urlReturn = dictWhPayload["alertData"]["imageUrl"]
+        getImgFile(urlReturn, strTimestampEpoch, isRecap)
+
+        return ("Recap image download success.")
+
+    ##Generate snapshot if isRecap != "y"
+    elif (fileCheck == 0 and isRecap!="y"):
         load_dotenv(dotenv_path=envFile)
         apiKey = getEnvKey("FCM_API_KEY")
 
@@ -98,10 +123,13 @@ def getSnap(dictWhPayload):
 
         getImgFile(urlReturn, strTimestampEpoch)
 
-        return urlReturn
+        return ("Snapshot generated from:\n" + urlReturn)
 
-    else:
-        print("Image file exists. Skip generate snapshot.")
+    ## Feedback if file exists
+    elif (fileCheck == 1):
+        print("Action: Skipping snapshot download.")
+
+
 
 ##Get Videolink to alert footage with timestamp in ISO8601 format
 def mvVidLink(dictWhPayload):
