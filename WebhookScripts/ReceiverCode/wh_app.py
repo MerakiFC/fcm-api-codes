@@ -23,7 +23,7 @@ def mv_task():
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
-    print("Webhook timestamp: ",strTimestampAEST,"\nStarting process...")
+    print("---\n---\nWebhook timestamp: ",strTimestampAEST,"\nStarting process...---\n---")
 
 
     ##Process the payload and perform necessary actions
