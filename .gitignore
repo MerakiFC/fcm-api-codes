@@ -3,8 +3,8 @@
 *test*
 *code-workspace*
 WebhookScripts/Guides/
-WebhookScripts/Payload/
+WebhookScripts/Payload/*sample*
 WebhookScripts/*.json
-WebhookScripts/ReceiverCode/__pycache__/
-WebhookScripts/ReceiverCode/snaps/
+*__pycache__*
+WebhookScripts/Receiver/snaps/
 wh_rcvr/

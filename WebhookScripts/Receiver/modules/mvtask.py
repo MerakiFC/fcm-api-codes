@@ -91,7 +91,7 @@ def getSnap(dictWhPayload, isRecap=""):
     ##Generate snapshot if isRecap != "y"
     elif (fileCheck == 0 and isRecap!="y"):
         load_dotenv(dotenv_path=envFile)
-        apiKey = getEnvKey("FCM_API_KEY")
+        apiKey = getEnvKey("M_API_KEY")
 
         strOccAtISO = dictWhPayload["occurredAt"]
         urlGenSnap = (urlMerakiAPI + "/devices/" + dictWhPayload["deviceSerial"] 
@@ -135,7 +135,7 @@ def getSnap(dictWhPayload, isRecap=""):
 def mvVidLink(dictWhPayload):
 
     load_dotenv(dotenv_path=envFile)
-    apiKey = getEnvKey("FCM_API_KEY")
+    apiKey = getEnvKey("M_API_KEY")
 
     ##URL definition
     urlVidLink = (urlMerakiAPI + "/devices/" + dictWhPayload["deviceSerial"] 
