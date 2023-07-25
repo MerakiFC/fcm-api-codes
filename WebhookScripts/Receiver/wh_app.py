@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/whtest', methods=['POST'])
 def test_only():
-    from apiConn import envTest
+    from apiEnv import envTest
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
 
     print ("Testing Connection...")
