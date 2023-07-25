@@ -7,7 +7,7 @@ global urlMerakiAPI
 global envFile
 
 envFile = "apiEnv/apiParams.env"
-urlMerakiAPI = "https://api.meraki.com/api/v1"
+urlMerakiAPI = getEnvKey("MERAKI_API_URL")
 
 ##Check if file exists, otherwise, download and save as strTimestamp entry
 def chkSnapFile(strTimestampEpoch, isRecap=""):    
@@ -90,7 +90,7 @@ def getSnap(dictWhPayload, isRecap=""):
 
     ##Generate snapshot if isRecap != "y"
     elif (fileCheck == 0 and isRecap!="y"):
-        load_dotenv(dotenv_path=envFile)
+        #load_dotenv(dotenv_path=envFile)
         apiKey = getEnvKey("M_API_KEY")
 
         strOccAtISO = dictWhPayload["occurredAt"]
@@ -134,7 +134,7 @@ def getSnap(dictWhPayload, isRecap=""):
 ##Get Videolink to alert footage with timestamp in ISO8601 format
 def mvVidLink(dictWhPayload):
 
-    load_dotenv(dotenv_path=envFile)
+    #load_dotenv(dotenv_path=envFile)
     apiKey = getEnvKey("M_API_KEY")
 
     ##URL definition

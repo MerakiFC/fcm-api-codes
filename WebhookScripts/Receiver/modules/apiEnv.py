@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 global filePath
 global envFile
 
-filePath = "apiEnv/apiParams.env"
-envFile = os.path.abspath(filePath)
+filePath = ".local/apiEnv/apiParams.env"
+envFile = os.path.join((os.path.expanduser("~")),filePath)
 
 def envTest():
     if os.path.exists(filePath):

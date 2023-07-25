@@ -6,8 +6,6 @@ from apiEnv import getEnvKey
 from mvtask import mvVidLink
 
 ## Environment variable pre-load
-apiKey = getEnvKey("FCM_API_KEY")
-urlMerakiAPI = getEnvKey("MERAKI_API_URL")
 urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_BOT_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
