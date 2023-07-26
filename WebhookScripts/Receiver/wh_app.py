@@ -19,12 +19,12 @@ def test_only():
 def mv_task():
     
     import mvtask
-    from wxtask import sendToWX
+    from wxtask import mvAlertToWX
     from dtConvert import epochToAest
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
-    print("---\n---\nWebhook timestamp: ",strTimestampAEST,"\nStarting process...\n---\n---")
+    print("##########\nWebhook timestamp: ",strTimestampAEST,"\nStarting process...\n##########")
 
 
     ##Process the payload and perform necessary actions
@@ -36,11 +36,28 @@ def mv_task():
         sys.exit(500)
     
     ## Assign response string to strResp and use as the final response string to webhook request
-    strResp = sendToWX(dictWhPayload, isRecap="y")
-    wxResponse = Response(strResp, content_type='text/plain')
-    return (wxResponse), 200
+    dictResp = mvAlertToWX(dictWhPayload, isRecap="y")
+    print(dictResp)
+    #wxResponse = Response(dictResp, content_type='application/json')
+    return (dictResp), 200
+
+@app.route('/plhandler', methods=['POST'])  ##development process 26/07/23
+def plhandler():
+
+    #from wxtask import sendToWX
+    from dtConvert import epochToAest
+    
+    dictWhPayload = request.get_json()  # Get the JSON payload from the request
+    strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
+    print("##########\nStarting plhandler process\n##########")
 
 
+    ##Process the payload and perform necessary actions
+    pass
+    
+    ## Assign response string to strResp and use as the final response string to webhook request
+
+    return (dictWhPayload), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8116, debug=True)

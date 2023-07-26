@@ -10,7 +10,7 @@ urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_BOT_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
 
-def sendToWX(dictWhPayload, isRecap=""):
+def mvAlertToWX(dictWhPayload, isRecap=""):
     
     #normalize epoch timestamp to string
     strTimestampEpoch = (str(int(dictWhPayload["alertData"]["timestamp"])))
@@ -78,5 +78,5 @@ def sendToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    strResponse = str("Message sent: " + str(dictResponse["created"]) + " (UTC)")
-    return (strResponse)
+    print ("Message sent: " + str(dictResponse["created"]) + " (UTC)")
+    return (dictResponse)
