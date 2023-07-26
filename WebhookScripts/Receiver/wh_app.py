@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 import sys
 sys.path.append('modules')
 
@@ -35,9 +35,10 @@ def mv_task():
         print("Snapshot processing error:\n", str(err))
         sys.exit(500)
     
-
-    sendToWX(dictWhPayload, isRecap="y")
-    return "OK", 200
+    ## Assign response string to strResp and use as the final response string to webhook request
+    strResp = sendToWX(dictWhPayload, isRecap="y")
+    wxResponse = Response(strResp, content_type='text/plain')
+    return (wxResponse), 200
 
 
 

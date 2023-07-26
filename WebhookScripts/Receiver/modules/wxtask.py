@@ -78,4 +78,5 @@ def sendToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print("Message sent: ", dictResponse["created"], " (UTC)")
+    strResponse = str("Message sent: " + str(dictResponse["created"]) + " (UTC)")
+    return (strResponse)
