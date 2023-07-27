@@ -53,8 +53,7 @@ def plhandler():
     ##Process the payload and perform necessary actions
     pass
     
-    ## Assign response string to strResp and use as the final response string to webhook request
-
+    ## return response body to webhook sender
     return (dictWhPayload), 200
 
 if __name__ == '__main__':
