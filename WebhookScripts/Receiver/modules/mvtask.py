@@ -9,46 +9,52 @@ global envFile
 urlMerakiAPI = getEnvKey("MERAKI_API_URL")
 
 ##Check if file exists, otherwise, download and save as strTimestamp entry
-def chkSnapFile(strTimestampEpoch, isRecap=""):    
-    
+def chkSnapFile(strTimestampEpoch, isRecap=""):
+
     #declare snaps/ sub-directory
     fileDir = "snaps"
+    absPathDir = os.path.join(os.getcwd(),fileDir)
+    
     
     #declare filename and path
     if isRecap == "y":
         fileName = (strTimestampEpoch + "-recap.jpg")
     else:
         fileName = (strTimestampEpoch + ".jpg")
-    
-    filePath = os.path.join(fileDir, fileName)
-    
+        
+    filePath = os.path.join(absPathDir, fileName)
+        
     ##Print message check if file exists
-    print("Action: Check existing image file...\n"+ os.path.join(os.getcwd(), filePath))
-
+    print("chkSnapFile: Check existing image file in...\n"+ filePath)
     if os.path.exists(filePath):
         print ("Warning: " + fileName + " exists in "+ fileDir 
         +" directory.")
         return (1)
     else:
-        print(fileName," not found. Proceeding...")
+        print("chkSnapFile: " + str(fileName) + " not found. Proceed...")
         return (0)
+    
+    
+    
+    
 
 
 
 def getImgFile(urlImage, strTimestampEpoch, isRecap=""):
 
-    print("Action: Download and save snapshot.")
+    print("getImgFile: Download and save snapshot.")
 
     #declare snaps/ sub-directory
     fileDir = "snaps"
-    
+    absPathDir = os.path.join(os.getcwd(),fileDir)
+
     #declare filename and path
     if isRecap == "y":
         fileName = (strTimestampEpoch + "-recap.jpg")
     else:
         fileName = (strTimestampEpoch + ".jpg")    
     
-    filePath = os.path.join(fileDir, fileName)    
+    filePath = os.path.join(absPathDir, fileName)    
 
     #initiate file dl request
     rxResponse = requests.get(urlImage, stream=True)
@@ -56,9 +62,9 @@ def getImgFile(urlImage, strTimestampEpoch, isRecap=""):
         with open(filePath, 'wb') as file:
             for chunk in rxResponse.iter_content(chunk_size=8192):
                 file.write(chunk)
-        print("Success! Snapshot saved as " + fileName)
+        print("getImgFile: Success! Snapshot saved as " + fileName)
     else:
-        print("Error ", str(rxResponse.status_code) + "\nSnapshot download failed.\n")
+        print("getImgFile: Error ", str(rxResponse.status_code) + "\nSnapshot download failed.\n")
         print(rxResponse.text)
         sys.exit(rxResponse.status_code)
 
@@ -73,9 +79,9 @@ def getSnap(dictWhPayload, isRecap=""):
     
     ##Call chkSnapFile function to see if snapshot already exists
     if isRecap == "y":
-        print("Using motion recap image.")
+        print("getSnap: Using motion recap image.")
     else:
-        print("Using default snapshot option.")
+        print("getSnap: Processing snapshot request.")
     
     fileCheck = chkSnapFile(strTimestampEpoch, isRecap=isRecap)
 
@@ -85,7 +91,7 @@ def getSnap(dictWhPayload, isRecap=""):
         urlReturn = dictWhPayload["alertData"]["imageUrl"]
         getImgFile(urlReturn, strTimestampEpoch, isRecap)
 
-        return ("Recap image download success.")
+        return ("getSnap: Recap image download success.")
 
     ##Generate snapshot if isRecap != "y"
     elif (fileCheck == 0 and isRecap!="y"):
@@ -106,13 +112,13 @@ def getSnap(dictWhPayload, isRecap=""):
             }
         
         ##Start Generate snapshot function##
-        print("Generating snapshot...")
+        print("getSnap: Request generate snapshot...")
 
         ##send getSnap request action
         try:
             rxResponse = requests.post(urlGenSnap, headers=txHeaders, data=txPayload)
         except Exception as err:
-            print ("---\nFailed to generate snapshot\n---\n", str(err))
+            print ("---\ngetSnap: Failed to generate snapshot\n---\n", str(err))
             sys.exit(400)
         
     
@@ -122,11 +128,11 @@ def getSnap(dictWhPayload, isRecap=""):
 
         getImgFile(urlReturn, strTimestampEpoch)
 
-        return ("Snapshot generated from:\n" + urlReturn)
+        return ("getSnap: Snapshot generated from:\n" + urlReturn)
 
     ## Feedback if file exists
     elif (fileCheck == 1):
-        print("Action: Skipping snapshot download.")
+        print("getSnap: Skipping generate snapshot.")
 
 
 
@@ -141,6 +147,7 @@ def mvVidLink(dictWhPayload):
 
     ##Test print
     #print (urlGetVidLink)
+    print("mvVidLink: Requesting internal video link...")
 
     txPayload = {}
     txHeaders = {

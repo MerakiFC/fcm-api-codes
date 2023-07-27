@@ -18,21 +18,22 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
     strTimestampAEST = (str(epochToAest(int(strTimestampEpoch))))
 
     fileDir = "snaps"
+    absPathDir = os.path.join(os.getcwd(),fileDir)
 
     if isRecap == 'y':
         fileName = (strTimestampEpoch + "-recap.jpg")
     else:
         fileName = (strTimestampEpoch + ".jpg")
 
-    imgFilePath = os.path.join(fileDir, fileName)
+    imgFilePath = os.path.join(absPathDir, fileName)
 
     ## Open image(.jpg) for attachment
     try:        
         with open(imgFilePath, "rb") as image:
             imgAttach = image.read()
-            print("Attaching image: ", imgFilePath)
+            print("mvAlertToWX: Attaching image from\n", imgFilePath)
     except Exception as err:
-        print ("File read error: ", str(TypeError) + "\n", str(err))
+        print ("mvAlertToWX: File read error: ", str(TypeError) + "\n", str(err))
         sys.exit(TypeError)
 
     ## from alertData["imageUrl"] -- for markdown string use only
@@ -56,7 +57,7 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
         )
 
     #Mid-run feedback
-    print("---\n*Markdown Body*\n---\n\n" + txMdBody + "\n\n---\n*eomd*\n---\n")
+    print("---\n*mvAlertToWX: Markdown Body*\n---\n\n" + txMdBody + "\n\n---\n*eomd*\n---\n")
     ##Build payload multipart attachment and transmit headers
 
     mpTxPayload = mp_enc({
@@ -78,5 +79,5 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print ("Message sent: " + str(dictResponse["created"]) + " (UTC)")
+    print ("mvAlertToWX: Message sent at " + str(dictResponse["created"]) + " (UTC)")
     return (dictResponse)

@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-import sys
+import sys,json
 sys.path.append('modules')
 
 
@@ -35,13 +35,11 @@ def mv_task():
         print("Snapshot processing error:\n", str(err))
         sys.exit(500)
     
-    ## Assign response string to strResp and use as the final response string to webhook request
+    ## Assign response string to dictResp and use as response (json) body to webhook request
     dictResp = mvAlertToWX(dictWhPayload, isRecap="y")
-    print(dictResp)
-    #wxResponse = Response(dictResp, content_type='application/json')
     return (dictResp), 200
 
-@app.route('/plhandler', methods=['POST'])  ##development process 26/07/23
+@app.route('/plhandler', methods=['POST'])  ###development process 26/07/23
 def plhandler():
 
     #from wxtask import sendToWX
