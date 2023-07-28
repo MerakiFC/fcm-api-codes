@@ -4,11 +4,11 @@ from dotenv import dotenv_values
 global envFile
 global useEnvFile
 
-envFile = (glob.glob("*.env"))[0]
 
 if os.getenv('MERAKI_API_URL') is not None:
     useEnvFile = ""
-elif os.path.isfile(envFile):
+elif os.path.isfile((glob.glob("*.env"))[0]):
+    envFile = (glob.glob("*.env"))[0]
     useEnvFile = "y"
 else:
     print("env not set.\n")

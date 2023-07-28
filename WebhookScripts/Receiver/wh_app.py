@@ -2,12 +2,13 @@ from flask import Flask, request
 import sys
 sys.path.append('modules')
 
+
+app = Flask(__name__)
+
 ##Setting environment parameters
 from apiEnv import envTest
 envTest()
 
-
-app = Flask(__name__)
 
 @app.route("/")
 def hello():
