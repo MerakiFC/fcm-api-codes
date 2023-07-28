@@ -1,10 +1,10 @@
-import os
-from dotenv import load_dotenv,dotenv_values
+import os, glob
+from dotenv import dotenv_values
 
 global envFile
 global useEnvFile
 
-envFile = "prod.env"
+envFile = (glob.glob("*.env"))[0]
 
 if os.getenv('MERAKI_API_URL') is not None:
     useEnvFile = ""
@@ -20,7 +20,7 @@ def envTest():
 
     elif useEnvFile == 'y' :
         dictEnv = dotenv_values(envFile)
-        print("Using "+ envFile + "\nMeraki URL:" + dictEnv['MERAKI_API_URL'])
+        print("Using "+ envFile + "\nMeraki URL: " + dictEnv['MERAKI_API_URL'])
 
 
 def getEnvKey(keyName):
