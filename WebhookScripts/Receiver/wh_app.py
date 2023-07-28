@@ -2,6 +2,10 @@ from flask import Flask, request
 import sys
 sys.path.append('modules')
 
+##Setting environment parameters
+from apiEnv import envTest
+envTest()
+
 
 app = Flask(__name__)
 
@@ -12,16 +16,13 @@ def hello():
 
 @app.route('/whtest', methods=['POST'])
 def test_only():
-    from apiEnv import envTest
+    
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
-
-    print ("Testing environment...")
-    envTest()
     return (dictWhPayload), 200
 
 
 @app.route('/mvmotionalert', methods=['POST'])
-def mv_task():
+def mvmotionalert():
     
     import mvtask
     from wxtask import mvAlertToWX

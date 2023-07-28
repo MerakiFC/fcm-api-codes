@@ -74,8 +74,8 @@ def getImgFile(urlImage, strTimestampEpoch, isRecap=""):
 ##Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
 def getSnap(dictWhPayload, isRecap=""):
 
-    ##Normalize alertData["timestamp"] to int
-    strTimestampEpoch = (str(int(dictWhPayload["alertData"]["timestamp"])))
+    ##Normalize alertData['timestamp'] to int
+    strTimestampEpoch = (str(int(dictWhPayload['alertData']['timestamp'])))
     
     ##Call chkSnapFile function to see if snapshot already exists
     if isRecap == "y":
@@ -88,7 +88,7 @@ def getSnap(dictWhPayload, isRecap=""):
     ##Download and save recap image if isRecap == "y"
     if (fileCheck == 0 and isRecap=="y"):
         
-        urlReturn = dictWhPayload["alertData"]["imageUrl"]
+        urlReturn = dictWhPayload['alertData']['imageUrl']
         getImgFile(urlReturn, strTimestampEpoch, isRecap)
 
         return ("getSnap: Recap image download success.")
@@ -98,8 +98,8 @@ def getSnap(dictWhPayload, isRecap=""):
 
         apiKey = getEnvKey("M_API_KEY")
 
-        strOccAtISO = dictWhPayload["occurredAt"]
-        urlGenSnap = (urlMerakiAPI + "/devices/" + dictWhPayload["deviceSerial"] 
+        strOccAtISO = dictWhPayload['occurredAt']
+        urlGenSnap = (urlMerakiAPI + "/devices/" + dictWhPayload['deviceSerial'] 
                         + "/camera/generateSnapshot")
 
         txPayload = json.dumps({
@@ -124,7 +124,7 @@ def getSnap(dictWhPayload, isRecap=""):
     
         ##Extract url string from response
         rxJResponse = rxResponse.json()
-        urlReturn = rxJResponse["url"]
+        urlReturn = rxJResponse['url']
 
         getImgFile(urlReturn, strTimestampEpoch)
 
@@ -142,8 +142,8 @@ def mvVidLink(dictWhPayload):
     apiKey = getEnvKey("M_API_KEY")
 
     ##URL definition
-    urlVidLink = (urlMerakiAPI + "/devices/" + dictWhPayload["deviceSerial"] 
-                + "/camera/videoLink/?timestamp=" + dictWhPayload["occurredAt"])
+    urlVidLink = (urlMerakiAPI + "/devices/" + dictWhPayload['deviceSerial'] 
+                + "/camera/videoLink/?timestamp=" + dictWhPayload['occurredAt'])
 
     ##Test print
     #print (urlGetVidLink)
@@ -160,7 +160,7 @@ def mvVidLink(dictWhPayload):
     rxResponse = requests.get(urlVidLink, headers=txHeaders, data=txPayload)
 
     ##Extract url string from response
-    urlReturn = (rxResponse.json()["url"])
+    urlReturn = (rxResponse.json()['url'])
 
     return urlReturn
 

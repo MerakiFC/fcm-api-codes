@@ -6,6 +6,9 @@ from apiEnv import getEnvKey
 from mvtask import mvVidLink
 
 ## Environment variable pre-load
+global urlWxApi 
+global wxToken
+global wxRoomId 
 urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_BOT_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
@@ -13,7 +16,7 @@ wxRoomId = getEnvKey("WX_ROOM_ID")
 def mvAlertToWX(dictWhPayload, isRecap=""):
     
     #normalize epoch timestamp to string
-    strTimestampEpoch = (str(int(dictWhPayload["alertData"]["timestamp"])))
+    strTimestampEpoch = (str(int(dictWhPayload['alertData']['timestamp'])))
     #Convert ISO8601 occurredAt time to AEST string
     strTimestampAEST = (str(epochToAest(int(strTimestampEpoch))))
 
@@ -36,11 +39,11 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
         print ("mvAlertToWX: File read error: ", str(TypeError) + "\n", str(err))
         sys.exit(TypeError)
 
-    ## from alertData["imageUrl"] -- for markdown string use only
-    urlImgRecap = dictWhPayload["alertData"]["imageUrl"]
+    ## from alertData['imageUrl'] -- for markdown string use only
+    urlImgRecap = dictWhPayload['alertData']['imageUrl']
 
-    ##Handle empty string on dictWhPayload["alertData"]["imageUrl"]
-    if (dictWhPayload["alertData"]["imageUrl"]) is None:
+    ##Handle empty string on dictWhPayload['alertData']['imageUrl']
+    if (dictWhPayload['alertData']['imageUrl']) is None:
         print("Warning: imageUrl not found")
         urlImgRecap = ("https://dashboard.meraki.com")
 
@@ -62,7 +65,7 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
     mpTxPayload = mp_enc({
                 "roomId": str(wxRoomId),
-                "text": (dictWhPayload["alertType"] + " from " + dictWhPayload["deviceName"]),
+                "text": (dictWhPayload['alertType'] + " from " + dictWhPayload['deviceName']),
                 "markdown": txMdBody,
                 "files": (fileName, imgAttach, 'image/jpg')
                 })
@@ -79,5 +82,5 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print ("mvAlertToWX: Message sent at " + str(dictResponse["created"]) + " (UTC)")
+    print ("mvAlertToWX: Message sent at " + str(dictResponse['created']) + " (UTC)")
     return (dictResponse)
