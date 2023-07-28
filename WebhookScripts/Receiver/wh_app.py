@@ -52,7 +52,7 @@ def plhandler():
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
-    print("##########\nStarting plhandler process\n##########")
+    print("##########\nStarting plhandler process:",strTimestampAEST,"\n##########")
 
 
     ##Process the payload and perform necessary actions
