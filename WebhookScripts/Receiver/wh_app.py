@@ -1,16 +1,21 @@
-from flask import Flask, request, Response
-import sys,json
+from flask import Flask, request
+import sys
 sys.path.append('modules')
 
 
 app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello, webhook user."
+
 
 @app.route('/whtest', methods=['POST'])
 def test_only():
     from apiEnv import envTest
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
 
-    print ("Testing Connection...")
+    print ("Testing environment...")
     envTest()
     return (dictWhPayload), 200
 
