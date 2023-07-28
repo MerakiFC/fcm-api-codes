@@ -4,7 +4,7 @@ from dotenv import load_dotenv,dotenv_values
 global envFile
 global useEnvFile
 
-envFile = "dev.env"
+envFile = "prod.env"
 
 if os.getenv('MERAKI_API_URL') is not None:
     useEnvFile = ""
