@@ -1,6 +1,5 @@
 [
     {
-<<<<<<< Updated upstream
         "alertTypeId": "sensor_automation",
         "alertType": "Sensor automation action",
         "example": {
@@ -50,51 +49,6 @@
                 }
               },
               "message": "Test Automation payload check"
-=======
-        "version": "0.1",
-        "sharedSecret": "",
-        "sentAt": "2023-07-22T04:32:21.965110Z",
-        "organizationId": "883086",
-        "organizationName": "FC@Meraki",
-        "organizationUrl": "https://n215.meraki.com/o/uoHSxd/manage/organization/overview",
-        "networkId": "L_683984193406917311",
-        "networkName": "HQ-Env",
-        "networkUrl": "https://n215.meraki.com/HQ-Env-environme/n/Pb75Raxd/manage/nodes/list",
-        "networkTags": [
-          "Env",
-          "Prod",
-          "Vision"
-        ],
-        "deviceSerial": "Q3CH-DZD8-X6PZ",
-        "deviceMac": "0c:7b:c8:ff:4d:71",
-        "deviceName": "HQ-MT30",
-        "deviceUrl": "https://n215.meraki.com/HQ-Env-environme/n/Pb75Raxd/manage/nodes/new_list/13725792685425",
-        "deviceTags": [
-          "recently-added"
-        ],
-        "deviceModel": "MT30",
-        "alertId": "683984193436267895",
-        "alertType": "Sensor automation action",
-        "alertTypeId": "sensor_automation",
-        "alertLevel": "informational",
-        "occurredAt": "2023-07-22T04:32:16.000000Z",
-        "alertData": {
-          "automationId": 683984193406894200,
-          "conditionId": 683984193406894300,
-          "action": {
-            "id": 683984193406894300,
-            "type": null
-          },
-          "trigger": {
-            "ts": "2023-07-22T04:32:16Z",
-            "sensor": {
-              "name": "HQ-MT30",
-              "serial": "Q3CH-DZD8-X6PZ"
-            },
-            "metric": "button",
-            "button": {
-              "pressType": "short"
->>>>>>> Stashed changes
             }
         }
       },

@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
-# Use the official Python 3.8 image as the base image (developed on WSL2 python3.8)
-FROM python:3.8-slim-buster
+
+# Use latest official Python 3.11 image as the base image (app developed on WSL2 python3.8)
+FROM python:3.11-slim-bookworm
 
 # Set the working directory inside the container
 WORKDIR /Receiver
