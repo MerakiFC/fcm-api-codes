@@ -10,7 +10,7 @@ global urlWxApi
 global wxToken
 global wxRoomId 
 urlWxApi = getEnvKey("WX_API_URL")
-wxToken = getEnvKey("WX_BOT_TOKEN")
+wxToken = getEnvKey("WX_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
 
 def mvAlertToWX(dictWhPayload, isRecap=""):
@@ -84,3 +84,7 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
     dictResponse = response.json()
     print ("mvAlertToWX: Message sent at " + str(dictResponse['created']) + " (UTC)")
     return (dictResponse)
+
+
+def eventToWX(dictWhPayload):
+    pass

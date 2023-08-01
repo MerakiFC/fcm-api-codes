@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 from apiEnv import getEnvKey
 
 global urlMerakiAPI
-global envFile
-
 urlMerakiAPI = getEnvKey("MERAKI_API_URL")
 
 ##Check if file exists, otherwise, download and save as strTimestamp entry

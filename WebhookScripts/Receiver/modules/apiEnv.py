@@ -5,7 +5,7 @@ global envFile
 global useEnvFile
 
 
-if os.getenv('MERAKI_API_URL') is not None:
+if os.getenv('M_API_KEY') is not (None or "YOUR_MERAKI_API_KEY"):
     useEnvFile = ""
 elif os.path.isfile((glob.glob("*.env"))[0]):
     envFile = (glob.glob("*.env"))[0]
