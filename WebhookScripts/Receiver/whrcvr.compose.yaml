@@ -24,7 +24,7 @@ services:
        [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
        /bin/hookdeck listen http://host.docker.internal:8116 mvmotionalert
     volumes:
-      - hookdeck:/root/.config/hookdeck  # Store auth tokens in volume
+      - $HOME/.config/hookdeck:/root/.config/hookdeck  # Store auth tokens in volume
     networks:
       - network1
 
@@ -36,4 +36,3 @@ networks:
     
 volumes:
   snaps-data:
-  hookdeck:
