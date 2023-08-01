@@ -1,0 +1,39 @@
+version: '3'
+services:
+  wh_rcvr:
+    image: "pandaxs/wh_rcvr:v0.2"
+    container_name: webhook_receiver
+    env_file:
+      - .env
+    ports:
+      - 8116:8116
+    volumes:
+      - snaps-data:/Receiver/snaps
+    networks:
+      - network1
+
+  hookdeck:
+    image: "hookdeck/hookdeck-cli"
+    container_name: hookdeck_instance
+    environment:
+      - TZ
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+       /bin/hookdeck version
+       [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
+       /bin/hookdeck listen http://host.docker.internal:8116 mvmotionalert
+    volumes:
+      - hookdeck:/root/.config/hookdeck  # Store auth tokens in volume
+    networks:
+      - network1
+
+networks:
+  network1:
+    name: webhookdeck
+    external: true
+
+    
+volumes:
+  snaps-data:
+  hookdeck:
