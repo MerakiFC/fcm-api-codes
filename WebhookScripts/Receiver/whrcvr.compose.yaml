@@ -22,7 +22,7 @@ services:
     - |
        /bin/hookdeck version
        [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
-       /bin/hookdeck listen http://host.docker.internal:8116 mvmotionalert
+       /bin/hookdeck listen http://webhook_receiver:8116 mvmotionalert
     volumes:
       - $HOME/.config/hookdeck:/root/.config/hookdeck  # Store auth tokens in volume
     networks:
