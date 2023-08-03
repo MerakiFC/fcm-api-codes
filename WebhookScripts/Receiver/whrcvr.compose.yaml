@@ -14,7 +14,7 @@ services:
 
   hookdeck:
     image: "hookdeck/hookdeck-cli"
-    container_name: hookdeck_instance
+    container_name: hookdeck-mvmotionalert
     environment:
       - TZ
     entrypoint: ["/bin/sh","-c"]
@@ -24,7 +24,7 @@ services:
        [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
        /bin/hookdeck listen http://webhook_receiver:8116 mvmotionalert
     volumes:
-      - $HOME/.config/hookdeck:/root/.config/hookdeck  # Store auth tokens in volume
+      - $HOME/.config/hookdeck:/root/.config/hookdeck  # persist hookdeck config from local config directory
     networks:
       - network1
 

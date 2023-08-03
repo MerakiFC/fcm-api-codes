@@ -1,7 +1,6 @@
 import os, sys, json, requests
-from dotenv import load_dotenv
 from requests_toolbelt import MultipartEncoder as mp_enc
-from dtConvert import epochToAest
+from dtConvert import epochToAest, utc_iso_to_tz_offset
 from apiEnv import getEnvKey
 from mvtask import mvVidLink
 
@@ -36,7 +35,7 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
             imgAttach = image.read()
             print("mvAlertToWX: Attaching image from\n", imgFilePath)
     except Exception as err:
-        print ("mvAlertToWX: File read error: ", str(TypeError) + "\n", str(err))
+        print ("mvAlertToWX File read error: ", str(TypeError) + "\n", str(err))
         sys.exit(TypeError)
 
     ## from alertData['imageUrl'] -- for markdown string use only
@@ -59,10 +58,10 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
         + "\n* Attachment URL: [recap](" + urlImgRecap +")"
         )
 
-    #Mid-run feedback
-    print("---\n*mvAlertToWX: Markdown Body*\n---\n\n" + txMdBody + "\n\n---\n*eomd*\n---\n")
+    #Markdown feedback send to Webex notification
+    print("-----\n*mvAlertToWX: Markdown Body*\n-----\n\n" + txMdBody + "\n\n-----\n*eomd*\n-----\n")
+    
     ##Build payload multipart attachment and transmit headers
-
     mpTxPayload = mp_enc({
                 "roomId": str(wxRoomId),
                 "text": (dictWhPayload['alertType'] + " from " + dictWhPayload['deviceName']),
@@ -82,7 +81,7 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print ("mvAlertToWX: Message sent at " + str(dictResponse['created']) + " (UTC)")
+    print ("mvAlertToWX: Message sent at ", utc_iso_to_tz_offset((dictResponse['created']), offset=10), "(UTC{:+d})".format(10))
     return (dictResponse)
 
 

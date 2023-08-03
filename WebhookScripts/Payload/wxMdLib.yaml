@@ -1,0 +1,42 @@
+motion_alert:
+  mdHeadline: '### {0} on: {1}'
+  mdContent: '\n* Video timestamp: **{0}**
+              \n* Attachment URL: [recap image]({1})
+              \n* Video Link (internal): {2}'
+  pl_index:
+    - 'alertType'
+    - 'deviceName'
+    - 'occurredAt'
+    - alertData:
+        - 'imageUrl'
+
+client_connectivity:
+  mdHeadline: '### {0}: {1}'
+  mdContent: '\n* Network Name: **{0}**
+              \n* Event Occurred At: {1}'
+  pl_index:
+    - 'alertType'
+    - 'deviceName'
+    - 'occurredAt'
+    - alertData:
+        - 'imageUrl'
+
+started_reporting:
+  mdHeadline: '### {0}: {1}'
+  mdContent: '\n* Network Name: **{0}**
+              \n* Event Occurred At: {1}'
+  pl_index:
+    - 'alertType'
+    - 'deviceName'
+    - 'networkName'
+    - 'occurredAt'
+
+stopped_reporting:
+  mdHeadline: '### {0}: {1}'
+  mdContent: '\n* Network Name: **{0}**
+              \n* Event Occurred At: {1}'
+  pl_index:
+    - 'alertType'
+    - 'deviceName'
+    - 'networkName'
+    - 'occurredAt'
