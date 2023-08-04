@@ -1,7 +1,7 @@
 version: '3'
 services:
   wh_rcvr:
-    image: "pandaxs/wh_rcvr:v0.3"
+    image: "pandaxs/wh_rcvr:v0.2"
     container_name: webhook_receiver
     env_file:
       - .env
