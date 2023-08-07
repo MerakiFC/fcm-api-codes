@@ -94,15 +94,16 @@ def eventToWX(dictWhPayload):
     )
 
     txContent = ("\n* Network Name: **{networkName}**"
-                +"\n* Event Occurred: **{occurredAt}**\n").format(
+                +"\n* Event Occurred: **{occurredAt}**").format(
                 networkName=dictWhPayload['networkName'],
                 occurredAt=utc_iso_to_tz_offset(dictWhPayload['occurredAt'], tzOffset)
     )
 
     ## Check for presence of alertData object and check if the object is not empty
     if ('alertData' in dictWhPayload) and dictWhPayload['alertData']:
+        txContent = txContent + "\n* **Alert Data:**\n"
         for key,value in (dictWhPayload['alertData']).items():
-            txContent = txContent + "  * "+ str(key) + " : " + str(value) + "\n"
+            txContent = txContent + "  * "+ str(key) + " : **" + str(value) + "**\n"
     
     mpTxPayload = mp_enc({
         "roomId": str(wxRoomId),

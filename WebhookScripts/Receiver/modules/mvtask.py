@@ -32,10 +32,6 @@ def chkSnapFile(strTimestampEpoch, isRecap=""):
         print("chkSnapFile: " + str(fileName) + " not found. Proceed...")
         return (0)
     
-    
-    
-    
-
 
 
 def getImgFile(urlImage, strTimestampEpoch, isRecap=""):
