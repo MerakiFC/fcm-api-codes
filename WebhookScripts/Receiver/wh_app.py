@@ -5,10 +5,12 @@ sys.path.append('modules')
 
 app = Flask(__name__)
 
+global tzOffset
 ##Setting environment parameters
-from apiEnv import envTest
-envTest()
+from apiEnv import envTest, getEnvKey
 
+envTest()
+tzOffset = int(getEnvKey("TZ_OFFSET"))
 
 @app.route("/")
 def hello():
@@ -27,11 +29,11 @@ def mvmotionalert():
     
     import mvtask
     from wxtask import mvAlertToWX
-    from dtConvert import epochToAest
+    from dtConvert import utc_iso_to_tz_offset
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
-    strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
-    print("##########\nWebhook timestamp: ",strTimestampAEST,"\nStarting process...\n##########")
+    strTimestampAEST = utc_iso_to_tz_offset(dictWhPayload["sentAt"], tzOffset)
+    print("##########\nStarting mvAlert process...\nWebhook sent time: ",strTimestampAEST,"\n##########")
 
 
     ##Process the payload and perform necessary actions
@@ -46,16 +48,16 @@ def mvmotionalert():
     dictResp = mvAlertToWX(dictWhPayload, isRecap="y")
     return (dictResp), 200
 
-@app.route('/alerttowx', methods=['POST'])  ###development process 26/07/23
+@app.route('/alerttowx', methods=['POST']) 
 def alertToWx():
 
     #from wxtask import eventToWx
-    from dtConvert import epochToAest
+    from dtConvert import utc_iso_to_tz_offset
     from wxtask import eventToWX
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
-    strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
-    print("##########\nStarting webhook event handler\nEvent timestamp: ",strTimestampAEST,"\n##########")
+    strTimestampAEST = utc_iso_to_tz_offset(dictWhPayload["sentAt"], tzOffset)
+    print("##########\nStarting webhook event handler\nWebhook sent time: ",strTimestampAEST,"\n##########")
 
 
     ## Send payload to eventToWx script and   

@@ -1,20 +1,17 @@
-import os, sys, json, requests, yaml
+import os, sys, json, requests
 from requests_toolbelt import MultipartEncoder as mp_enc
 from dtConvert import epochToAest, utc_iso_to_tz_offset
 from apiEnv import getEnvKey
 from mvtask import mvVidLink
 
 ## Environment variable pre-load
-global urlWxApi, wxToken, wxRoomId, dictMdLib
+global urlWxApi, wxToken, wxRoomId, dictMdLib, tzOffset
 
 urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
 tzOffset = int(getEnvKey("TZ_OFFSET"))
 
-ymlFile = ("modules/wxMdLib.yaml")
-with open(ymlFile,'r') as file:
-    dictMdLib = yaml.safe_load(file)
 
 def mvAlertToWX(dictWhPayload, isRecap=""):
     
@@ -90,17 +87,16 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
 
 def eventToWX(dictWhPayload):
-    # Select markdown format based on alertTypeId
-    mdType = dictWhPayload['alertTypeId']
 
-    txHeadline = (dictMdLib[mdType]['mdHeadline']).format(
+    txHeadline = ("### {alertType}: {deviceName}").format(
         alertType=dictWhPayload['alertType'],
         deviceName=dictWhPayload['deviceName']
     )
 
-    txContent = ("\n"+dictMdLib[mdType]['mdContent']).format(
-        networkName=dictWhPayload['networkName'],
-        occurredAt=utc_iso_to_tz_offset(dictWhPayload['occurredAt'], tzOffset)
+    txContent = ("\n* Network Name: **{networkName}**"
+                +"\n* Event Occurred: **{occurredAt}**\n").format(
+                networkName=dictWhPayload['networkName'],
+                occurredAt=utc_iso_to_tz_offset(dictWhPayload['occurredAt'], tzOffset)
     )
 
     ## Check for presence of alertData object and check if the object is not empty
@@ -111,7 +107,7 @@ def eventToWX(dictWhPayload):
     mpTxPayload = mp_enc({
         "roomId": str(wxRoomId),
         "text": (dictWhPayload['alertType'] + " : " + dictWhPayload['deviceName']),
-        "markdown" : (txHeadline + "\n" + txContent)
+        "markdown" : (txHeadline + txContent)
         })
 
     txHeaders = ({
