@@ -1,90 +1,260 @@
 [
-    {
-        "alertTypeId": "sensor_automation",
-        "alertType": "Sensor automation action",
-        "example": {
-            "version": "0.1",
-            "sharedSecret": "",
-            "sentAt": "2023-07-17T13:41:22.071143Z",
-            "organizationId": "883086",
-            "organizationName": "FC@Meraki",
-            "organizationUrl": "https://n215.meraki.com/o/uoHSxd/manage/organization/overview",
-            "networkId": "L_683984193406917311",
-            "networkName": "HQ-Env",
-            "networkUrl": "https://n215.meraki.com/HQ-Env-environme/n/Pb75Raxd/manage/nodes/list",
-            "networkTags": [
-              "Env",
-              "Prod",
-              "Vision"
-            ],
-            "deviceSerial": "Q3CH-DZD8-X6PZ",
-            "deviceMac": "0c:7b:c8:ff:4d:71",
-            "deviceName": "HQ-MT30",
-            "deviceUrl": "https://n215.meraki.com/HQ-Env-environme/n/Pb75Raxd/manage/nodes/new_list/13725792685425",
-            "deviceTags": [
-              "recently-added"
-            ],
-            "deviceModel": "MT30",
-            "alertId": "683984193436154224",
-            "alertType": "Sensor automation action",
-            "alertTypeId": "sensor_automation",
-            "alertLevel": "informational",
-            "occurredAt": "2023-07-17T13:41:19.000000Z",
-            "alertData": {
-              "automationId": 683984193406894200,
-              "conditionId": 683984193406894300,
-              "action": {
-                "id": 683984193406894300,
-                "type": null
-              },
-              "trigger": {
-                "ts": "2023-07-17T13:41:19Z",
-                "sensor": {
-                  "name": "HQ-MT30",
-                  "serial": "Q3CH-DZD8-X6PZ"
-                },
-                "metric": "button",
-                "button": {
-                  "pressType": "short"
-                }
-              },
-              "message": "Test Automation payload check"
-            }
+  {
+    "version": "0.1",
+    "sharedSecret": "",
+    "sentAt": "2023-07-17T13:41:22.071143Z",
+    "organizationId": "883086",
+    "organizationName": "FC@Meraki",
+    "organizationUrl": "https://n215.meraki.com/o/uoHSxd/manage/organization/overview",
+    "networkId": "L_683984193406917311",
+    "networkName": "HQ-Env",
+    "networkUrl": "https://n215.meraki.com/HQ-Env-environme/n/Pb75Raxd/manage/nodes/list",
+    "networkTags": [
+      "Env",
+      "Prod",
+      "Vision"
+    ],
+    "deviceSerial": "Q3CH-DZD8-X6PZ",
+    "deviceMac": "0c:7b:c8:ff:4d:71",
+    "deviceName": "HQ-MT30",
+    "deviceUrl": "https://n215.meraki.com/HQ-Env-environme/n/Pb75Raxd/manage/nodes/new_list/13725792685425",
+    "deviceTags": [
+      "recently-added"
+    ],
+    "deviceModel": "MT30",
+    "alertId": "683984193436154224",
+    "alertType": "Sensor automation action",
+    "alertTypeId": "sensor_automation",
+    "alertLevel": "informational",
+    "occurredAt": "2023-07-17T13:41:19.000000Z",
+    "alertData": {
+      "automationId": 683984193406894200,
+      "conditionId": 683984193406894300,
+      "action": {
+        "id": 683984193406894300,
+        "type": null
+      },
+      "trigger": {
+        "ts": "2023-07-17T13:41:19Z",
+        "sensor": {
+          "name": "HQ-MT30",
+          "serial": "Q3CH-DZD8-X6PZ"
+        },
+        "metric": "button",
+        "button": {
+          "pressType": "short"
         }
       },
-    {
-        "alertTypeId": "motion_alert",
-        "alertType": "Motion detected",
-        "example": {
-            "version": "0.1",
-            "sharedSecret": "secret",
-            "sentAt": "2021-10-01T09:27:29.615483Z",
-            "organizationId": "2930418",
-            "organizationName": "My organization",
-            "organizationUrl": "https://dashboard.meraki.com/o/VjjsAd/manage/organization/overview",
-            "networkId": "N_24329156",
-            "networkName": "Main Office",
-            "networkUrl": "https://n1.meraki.com//n//manage/nodes/list",
-            "networkTags": [],
-            "deviceSerial": "Q234-ABCD-5678",
-            "deviceMac": "00:11:22:33:44:55",
-            "deviceName": "My camera",
-            "deviceUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000",
-            "deviceTags": [ "tag1", "tag2" ],
-            "deviceModel": "MV",
-            "alertId": "0000000000000000",
-            "alertType": "Motion detected",
-            "alertTypeId": "motion_alert",
-            "alertLevel": "informational",
-            "occurredAt": "2018-02-11T00:00:00.123450Z",
-            "alertData": {
-                "imageUrl": "https://cataas.com/cat",
-                "timestamp": 1563499479.547,
-                "motionRecapEnabled": true,
-                "motionDetectorAllowsRecap": true,
-                "isSpyglass": false,
-                "imageEnabled": true
-            }
-        }
+      "message": "Test Automation payload check"
     }
+},
+  {
+  "version": "0.1",
+  "sharedSecret": "secret",
+  "sentAt": "2021-10-01T09:27:29.615483Z",
+  "organizationId": "2930418",
+  "organizationName": "My organization",
+  "organizationUrl": "https://dashboard.meraki.com/o/VjjsAd/manage/organization/overview",
+  "networkId": "N_24329156",
+  "networkName": "Main Office",
+  "networkUrl": "https://n1.meraki.com//n//manage/nodes/list",
+  "networkTags": [],
+  "deviceSerial": "Q234-ABCD-5678",
+  "deviceMac": "00:11:22:33:44:55",
+  "deviceName": "My camera",
+  "deviceUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000",
+  "deviceTags": [ "tag1", "tag2" ],
+  "deviceModel": "MV",
+  "alertId": "0000000000000000",
+  "alertType": "Motion detected",
+  "alertTypeId": "motion_alert",
+  "alertLevel": "informational",
+  "occurredAt": "2018-02-11T00:00:00.123450Z",
+  "alertData": {
+      "imageUrl": "https://cataas.com/cat",
+      "timestamp": 1563499479.547,
+      "motionRecapEnabled": true,
+      "motionDetectorAllowsRecap": true,
+      "isSpyglass": false,
+      "imageEnabled": true
+  }
+},
+  {
+  "version": "0.1",
+  "sharedSecret": "secret",
+  "sentAt": "2021-10-01T09:27:29.647522Z",
+  "organizationId": "2930418",
+  "organizationName": "My organization",
+  "organizationUrl": "https://dashboard.meraki.com/o/VjjsAd/manage/organization/overview",
+  "networkId": "N_24329156",
+  "networkName": "Main Office",
+  "networkUrl": "https://n1.meraki.com//n//manage/nodes/list",
+  "networkTags": [],
+  "deviceSerial": "Q234-ABCD-5678",
+  "deviceMac": "00:11:22:33:44:55",
+  "deviceName": "My appliance",
+  "deviceUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000",
+  "deviceTags": [ "tag1", "tag2" ],
+  "deviceModel": "MX",
+  "alertId": "0000000000000000",
+  "alertType": "Client connectivity changed",
+  "alertTypeId": "client_connectivity",
+  "alertLevel": "warning",
+  "occurredAt": "2018-02-11T00:00:00.123450Z",
+  "alertData": {
+      "mac": "00:11:22:33:44:55",
+      "ip": "192.168.1.2",
+      "connected": "true",
+      "clientName": "Cisco Meraki valued client",
+      "clientUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000"
+  }
+},
+  {
+  "version": "0.1",
+  "sharedSecret": "secret",
+  "sentAt": "2021-10-01T09:27:29.649315Z",
+  "organizationId": "2930418",
+  "organizationName": "My organization",
+  "organizationUrl": "https://dashboard.meraki.com/o/VjjsAd/manage/organization/overview",
+  "networkId": "N_24329156",
+  "networkName": "Main Office",
+  "networkUrl": "https://n1.meraki.com//n//manage/nodes/list",
+  "networkTags": [],
+  "deviceSerial": "Q234-ABCD-5678",
+  "deviceMac": "00:11:22:33:44:55",
+  "deviceName": "My switch",
+  "deviceUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000",
+  "deviceTags": [ "tag1", "tag2" ],
+  "deviceModel": "MS",
+  "alertId": "0000000000000000",
+  "alertType": "Switch port disconnected",
+  "alertTypeId": "port_disconnected",
+  "alertLevel": "warning",
+  "occurredAt": "2018-02-11T00:00:00.123450Z",
+  "alertData": {
+      "portNum": 3,
+      "description": "Switch port is down",
+      "status": "down",
+      "prevStatus": "100 Gbps",
+      "portDesc": "Corp Access"
+  }
+},
+{
+  "version": "0.1",
+  "sharedSecret": "secret",
+  "sentAt": "2021-10-01T09:27:29.679579Z",
+  "organizationId": "2930418",
+  "organizationName": "My organization",
+  "organizationUrl": "https://dashboard.meraki.com/o/VjjsAd/manage/organization/overview",
+  "networkId": "N_24329156",
+  "networkName": "Main Office",
+  "networkUrl": "https://n1.meraki.com//n//manage/nodes/list",
+  "networkTags": [],
+  "deviceSerial": "Q234-ABCD-5678",
+  "deviceMac": "00:11:22:33:44:55",
+  "deviceName": "My switch",
+  "deviceUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000",
+  "deviceTags": [ "tag1", "tag2" ],
+  "deviceModel": "MS",
+  "alertId": "0000000000000000",
+  "alertType": "Uplink status changed",
+  "alertTypeId": "failover_event",
+  "alertLevel": "warning",
+  "occurredAt": "2018-02-11T00:00:00.123450Z",
+  "alertData": { "uplink": "0" }
+},
+  {
+  "version": "0.1",
+  "sharedSecret": "secret",
+  "sentAt": "2021-10-01T09:27:29.628962Z",
+  "organizationId": "2930418",
+  "organizationName": "My organization",
+  "organizationUrl": "https://dashboard.meraki.com/o/VjjsAd/manage/organization/overview",
+  "networkId": "N_24329156",
+  "networkName": "Main Office",
+  "networkUrl": "https://n1.meraki.com//n//manage/nodes/list",
+  "networkTags": [],
+  "deviceSerial": "Q234-ABCD-5678",
+  "deviceMac": "00:11:22:33:44:55",
+  "deviceName": "My access point",
+  "deviceUrl": "https://n1.meraki.com//n//manage/nodes/new_list/000000000000",
+  "deviceTags": [ "tag1", "tag2" ],
+  "deviceModel": "MR",
+  "alertId": "0000000000000000",
+  "alertType": "APs came up",
+  "alertTypeId": "started_reporting",
+  "alertLevel": "informational",
+  "occurredAt": "2018-02-11T00:00:00.123450Z",
+  "alertData": {}
+},
+  {
+  "version": "0.1",
+  "sharedSecret": "",
+  "sentAt": "2023-08-03T12:10:37.519188Z",
+  "organizationId": "883086",
+  "organizationName": "FC@Meraki",
+  "organizationUrl": "https://n215.meraki.com/o/uoHSxd/manage/organization/overview",
+  "networkId": "L_683984193406917257",
+  "networkName": "HQ-Campus",
+  "networkUrl": "https://n215.meraki.com/HQ-Campus-switch/n/DajM-bxd/manage/nodes/list",
+  "networkTags": [
+    "Infra",
+    "Main",
+    "Prod"
+  ],
+  "deviceSerial": "Q2MW-44FR-GJBS",
+  "deviceMac": "14:9f:43:a3:f4:e8",
+  "deviceName": "HQ-MS250-Core",
+  "deviceUrl": "https://n215.meraki.com/HQ-Campus-switch/n/DajM-bxd/manage/nodes/new_list/22674267174120",
+  "deviceTags": [
+    "HQ-Core",
+    "Infra",
+    "Prod"
+  ],
+  "deviceModel": "MS250-24P",
+  "alertId": "",
+  "alertType": "switches went down",
+  "alertTypeId": "stopped_reporting",
+  "alertLevel": "critical",
+  "occurredAt": "2023-08-03T12:10:37.508211Z",
+  "alertData": {}
+},
+  {
+  "version": "0.1",
+  "sharedSecret": "",
+  "sentAt": "2023-08-03T12:13:10.991783Z",
+  "organizationId": "883086",
+  "organizationName": "FC@Meraki",
+  "organizationUrl": "https://n215.meraki.com/o/uoHSxd/manage/organization/overview",
+  "networkId": "L_683984193406917257",
+  "networkName": "HQ-Campus",
+  "networkUrl": "https://n215.meraki.com/HQ-Campus-switch/n/DajM-bxd/manage/nodes/list",
+  "networkTags": [
+    "Infra",
+    "Main",
+    "Prod"
+  ],
+  "deviceSerial": "Q2MW-44FR-GJBS",
+  "deviceMac": "14:9f:43:a3:f4:e8",
+  "deviceName": "HQ-MS250-Core",
+  "deviceUrl": "https://n215.meraki.com/HQ-Campus-switch/n/DajM-bxd/manage/nodes/new_list/22674267174120",
+  "deviceTags": [
+    "HQ-Core",
+    "Infra",
+    "Prod"
+  ],
+  "deviceModel": "MS250-24P",
+  "alertId": "",
+  "alertType": "Client connectivity changed",
+  "alertTypeId": "client_connectivity",
+  "alertLevel": "warning",
+  "occurredAt": "2023-08-03T12:13:10.967532Z",
+  "alertData": {
+    "mac": "00:11:22:33:44:55",
+    "ip": "192.168.1.2",
+    "connected": "true",
+    "clientName": "Cisco Meraki valued client",
+    "clientUrl": "https://n215.meraki.com/HQ-Campus-switch/n/DajM-bxd/manage/usage/list#c=k909b4b"
+  }
+}
 ]

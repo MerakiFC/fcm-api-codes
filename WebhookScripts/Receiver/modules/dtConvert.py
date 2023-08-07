@@ -43,7 +43,7 @@ def utc_iso_to_epoch(utc_time_iso):
         return None
 
 
-##Accept UTC time in ISO8601 format, convert to specified timezone with offset
+##Accept UTC time in ISO8601 format, convert to specified timezone with offset (output in str format)
 def utc_iso_to_tz_offset(isoUTC, offset):
     try:
         # Convert the UTC time ISO string to a datetime object
@@ -59,9 +59,13 @@ def utc_iso_to_tz_offset(isoUTC, offset):
 
         # Convert the result back to ISO 8601 format
         converted_time_iso = converted_time.isoformat()
+        
+        
+        converted_time_str = str(converted_time_iso).replace('+00:00', (' (UTC{:+d})').format(offset))
+        
+        return converted_time_str
+        
 
-        return converted_time_iso
-    
     except ValueError:
         print("dtConvert Error: Invalid ISO 8601 format or offset value.")
         return None

@@ -46,24 +46,23 @@ def mvmotionalert():
     dictResp = mvAlertToWX(dictWhPayload, isRecap="y")
     return (dictResp), 200
 
-@app.route('/whooktowx', methods=['POST'])  ###development process 26/07/23
-def plhandler():
+@app.route('/alerttowx', methods=['POST'])  ###development process 26/07/23
+def alertToWx():
 
     #from wxtask import eventToWx
     from dtConvert import epochToAest
+    from wxtask import eventToWX
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = str(epochToAest(dictWhPayload["alertData"]["timestamp"]))
-    print("##########\nStarting webhook event handler:",strTimestampAEST,"\n##########")
+    print("##########\nStarting webhook event handler\nEvent timestamp: ",strTimestampAEST,"\n##########")
 
 
-    ##Process the payload and perform necessary actions
-    pass
-    return(dictWhPayload),200
-        
+    ## Send payload to eventToWx script and   
     ## return response body to webhook sender
-    #dictResp = eventToWx(dictWhPayload, isRecap="y")
-    #return (dictResp), 200
+    dictResp = eventToWX(dictWhPayload)
+    return (dictResp), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8116, debug=True)

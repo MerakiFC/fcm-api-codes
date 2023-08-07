@@ -1,16 +1,20 @@
-import os, sys, json, requests
+import os, sys, json, requests, yaml
 from requests_toolbelt import MultipartEncoder as mp_enc
 from dtConvert import epochToAest, utc_iso_to_tz_offset
 from apiEnv import getEnvKey
 from mvtask import mvVidLink
 
 ## Environment variable pre-load
-global urlWxApi 
-global wxToken
-global wxRoomId 
+global urlWxApi, wxToken, wxRoomId, dictMdLib
+
 urlWxApi = getEnvKey("WX_API_URL")
 wxToken = getEnvKey("WX_TOKEN")
 wxRoomId = getEnvKey("WX_ROOM_ID")
+tzOffset = int(getEnvKey("TZ_OFFSET"))
+
+ymlFile = ("modules/wxMdLib.yaml")
+with open(ymlFile,'r') as file:
+    dictMdLib = yaml.safe_load(file)
 
 def mvAlertToWX(dictWhPayload, isRecap=""):
     
@@ -52,10 +56,10 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
     
     #Create markdown string for transmit payload
     txMdBody = (
-        "### " + dictWhPayload['alertType'] + " on: " + dictWhPayload['deviceName'] 
+        "### " + dictWhPayload['alertType'] + " : " + dictWhPayload['deviceName'] 
         + "\n* Video timestamp: **" + strTimestampAEST + "**"
+        + "\n* Attachment URL: image [recap](" + urlImgRecap +")"
         + "\n* Video Link: " + vidUrl
-        + "\n* Attachment URL: [recap](" + urlImgRecap +")"
         )
 
     #Markdown feedback send to Webex notification
@@ -64,7 +68,7 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
     ##Build payload multipart attachment and transmit headers
     mpTxPayload = mp_enc({
                 "roomId": str(wxRoomId),
-                "text": (dictWhPayload['alertType'] + " from " + dictWhPayload['deviceName']),
+                "text": (dictWhPayload['alertType'] + " : " + dictWhPayload['deviceName']),
                 "markdown": txMdBody,
                 "files": (fileName, imgAttach, 'image/jpg')
                 })
@@ -81,9 +85,46 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print ("mvAlertToWX: Message sent at ", utc_iso_to_tz_offset((dictResponse['created']), offset=10), "(UTC{:+d})".format(10))
+    print ("mvAlertToWX: Message sent at ", utc_iso_to_tz_offset((dictResponse['created']), tzOffset))
     return (dictResponse)
 
 
 def eventToWX(dictWhPayload):
-    pass
+    # Select markdown format based on alertTypeId
+    mdType = dictWhPayload['alertTypeId']
+
+    txHeadline = (dictMdLib[mdType]['mdHeadline']).format(
+        alertType=dictWhPayload['alertType'],
+        deviceName=dictWhPayload['deviceName']
+    )
+
+    txContent = ("\n"+dictMdLib[mdType]['mdContent']).format(
+        networkName=dictWhPayload['networkName'],
+        occurredAt=utc_iso_to_tz_offset(dictWhPayload['occurredAt'], tzOffset)
+    )
+
+    ## Check for presence of alertData object and check if the object is not empty
+    if ('alertData' in dictWhPayload) and dictWhPayload['alertData']:
+        for key,value in (dictWhPayload['alertData']).items():
+            txContent = txContent + "  * "+ str(key) + " : " + str(value) + "\n"
+    
+    mpTxPayload = mp_enc({
+        "roomId": str(wxRoomId),
+        "text": (dictWhPayload['alertType'] + " : " + dictWhPayload['deviceName']),
+        "markdown" : (txHeadline + "\n" + txContent)
+        })
+
+    txHeaders = ({
+        'Content-Type': mpTxPayload.content_type,
+        'Authorization': 'Bearer '+ wxToken
+        })
+
+
+    ##Action:Post to Webex and return response code
+    response = requests.post(urlWxApi, headers=txHeaders, data=mpTxPayload)
+    print (response.status_code)
+
+    ##Feedback: print response body
+    dictResponse = response.json()
+    print ("eventToWX: Message sent at ", utc_iso_to_tz_offset((dictResponse['created']), tzOffset))
+    return (dictResponse)
