@@ -1,7 +1,7 @@
 version: '3'
 services:
   wh_rcvr:
-    image: "pandaxs/wh_rcvr:v0.3"
+    image: "pandaxs/wh_rcvr:latest"
     container_name: webhook_receiver
     env_file:
       - .env
@@ -9,22 +9,6 @@ services:
       - 8116:8116
     volumes:
       - snaps-data:/Receiver/snaps
-    networks:
-      - network1
-
-  hookdeck-mvmotionalert:
-    image: "hookdeck/hookdeck-cli"
-    container_name: hookdeck-mvmotionalert
-    environment:
-      - TZ
-    entrypoint: ["/bin/sh","-c"]
-    command:
-    - |
-       /bin/hookdeck version
-       [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
-       /bin/hookdeck listen http://webhook_receiver:8116 mvmotionalert
-    volumes:
-      - $HOME/.config/hookdeck:/root/.config/hookdeck  # persist hookdeck config from local config directory
     networks:
       - network1
 

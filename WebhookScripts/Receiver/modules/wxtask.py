@@ -54,13 +54,14 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
     #Create markdown string for transmit payload
     txMdBody = (
         "### " + dictWhPayload['alertType'] + " : " + dictWhPayload['deviceName'] 
+        + "\n* Network Name: **" + dictWhPayload['networkName'] + "**"
         + "\n* Video timestamp: **" + strTimestampAEST + "**"
-        + "\n* Attachment URL: image [recap](" + urlImgRecap +")"
-        + "\n* Video Link: " + vidUrl
+        + "\n* Attachment **URL**: image [recap](" + urlImgRecap +")"
+        + "\n* **Video Link**: " + vidUrl
         )
 
     #Markdown feedback send to Webex notification
-    print("-----\n*mvAlertToWX: Markdown Body*\n-----\n\n" + txMdBody + "\n\n-----\n*eomd*\n-----\n")
+    print("----------\nmvAlertToWX: Markdown Body\n----------\n\n" + txMdBody + "\n\n----------\n*eomd*\n----------\n")
     
     ##Build payload multipart attachment and transmit headers
     mpTxPayload = mp_enc({
@@ -82,11 +83,11 @@ def mvAlertToWX(dictWhPayload, isRecap=""):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print ("mvAlertToWX: Message sent at ", utc_iso_to_tz_offset((dictResponse['created']), tzOffset))
+    print ("mvAlertToWX: Message sent", utc_iso_to_tz_offset((dictResponse['created']), tzOffset))
     return (dictResponse)
 
 
-def eventToWX(dictWhPayload):
+def eventToWx(dictWhPayload):
 
     txHeadline = ("### {alertType}: {deviceName}").format(
         alertType=dictWhPayload['alertType'],
@@ -101,7 +102,7 @@ def eventToWX(dictWhPayload):
 
     ## Check for presence of alertData object and check if the object is not empty
     if ('alertData' in dictWhPayload) and dictWhPayload['alertData']:
-        txContent = txContent + "\n* **Alert Data:**\n"
+        txContent = txContent + "\n* Alert Data:\n"
         for key,value in (dictWhPayload['alertData']).items():
             txContent = txContent + "  * "+ str(key) + " : **" + str(value) + "**\n"
     
@@ -123,5 +124,5 @@ def eventToWX(dictWhPayload):
 
     ##Feedback: print response body
     dictResponse = response.json()
-    print ("eventToWX: Message sent at ", utc_iso_to_tz_offset((dictResponse['created']), tzOffset))
+    print ("eventToWx: Message sent", utc_iso_to_tz_offset((dictResponse['created']), tzOffset))
     return (dictResponse)

@@ -3,7 +3,7 @@
 *test*
 *code-workspace*
 WebhookScripts/Guides/
-WebhookScripts/Payload/*sample*
+WebhookScripts/Payload/
 WebhookScripts/*.json
 *__pycache__*
 WebhookScripts/Receiver/snaps/

@@ -33,7 +33,7 @@ def mvmotionalert():
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = utc_iso_to_tz_offset(dictWhPayload["sentAt"], tzOffset)
-    print("##########\nStarting mvAlert process...\nWebhook sent time: ",strTimestampAEST,"\n##########")
+    print("---------------\nStarting mvAlert. Webhook sent: ",strTimestampAEST,"\n---------------")
 
 
     ##Process the payload and perform necessary actions
@@ -53,18 +53,22 @@ def alertToWx():
 
     #from wxtask import eventToWx
     from dtConvert import utc_iso_to_tz_offset
-    from wxtask import eventToWX
+    from wxtask import eventToWx
+    from wh_handler import eventhandler
     
     dictWhPayload = request.get_json()  # Get the JSON payload from the request
     strTimestampAEST = utc_iso_to_tz_offset(dictWhPayload["sentAt"], tzOffset)
-    print("##########\nStarting webhook event handler\nWebhook sent time: ",strTimestampAEST,"\n##########")
+    print("---------------\nEvent received. Webhook sent: ",strTimestampAEST,"\n---------------")
+
+    dictResp = eventhandler(dictWhPayload)
 
 
     ## Send payload to eventToWx script and   
     ## return response body to webhook sender
-    dictResp = eventToWX(dictWhPayload)
+    
+    #dictResp = eventToWx(dictWhPayload)
     return (dictResp), 200
-
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8116, debug=True)
