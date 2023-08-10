@@ -1,12 +1,7 @@
 import mvtask
-from apiEnv import getEnvKey
+#from apiEnv import getEnvKey
 from wxtask import mvAlertToWX, eventToWx
-from dtConvert import epochToAest, utc_iso_to_tz_offset
 
-
-global tzOffset
-
-tzOffset = int(getEnvKey("TZ_OFFSET"))
 
 ##Handler for 3 main events: mvMotionAlert, sensorAutomation, webhookEvent
 
@@ -26,14 +21,13 @@ def eventhandler(dictWhPayload):
         dictResp = mvAlertToWX(dictWhPayload, isRecap="y")
         return (dictResp)
         
-     
-    elif dictWhPayload['alertTypeId'] == 'sensor_automation':
-        print("Sensor Automation\n---------------")
-        pass ##define sensorAutomation process
-
+ 
+    #elif dictWhPayload['alertTypeId'] == 'sensor_automation':
+    #    print("Sensor Automation\n---------------")
+    #    pass ##define sensorAutomation process
 
     ## Default webhook payload handler for all other events
     else:
-            print("Webhook Handler\n---------------")
-            dictResp = eventToWx(dictWhPayload)
-            return (dictResp)
+        print("Webhook Handler\n---------------")
+        dictResp = eventToWx(dictWhPayload)
+        return (dictResp)

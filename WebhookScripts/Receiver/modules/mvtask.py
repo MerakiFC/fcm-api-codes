@@ -1,6 +1,6 @@
 import requests
 import os, json, sys
-from dotenv import load_dotenv
+
 from apiEnv import getEnvKey
 
 global urlMerakiAPI
