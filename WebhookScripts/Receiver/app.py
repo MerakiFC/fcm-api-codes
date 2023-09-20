@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import PlainTextResponse
 import uvicorn
-import sys
+
 
 from WebhookScripts.Receiver.src.Environment import get_env_key, env_test
 from WebhookScripts.Receiver.src.dtConvert import utc_iso_to_tz_offset
@@ -38,13 +38,13 @@ async def send_motion_alert(request: Request):
 
     try:
         get_snap(payload=payload, is_recap=True)
+        # Assign response string to dictResp and use as response (json) body to webhook request
+        return mv_alert_to_wx(payload=payload, is_recap=True)
 
     except Exception as e:
-        print("Snapshot processing error:\n", str(e))
-        sys.exit(500)
+        raise HTTPException(status_code=409, detail=e)
     
-    # Assign response string to dictResp and use as response (json) body to webhook request
-    return mv_alert_to_wx(payload=payload, is_recap=True)
+
 
 
 @app.post('/alert/wx', description='Description about this endpoint goes here', status_code=200)
