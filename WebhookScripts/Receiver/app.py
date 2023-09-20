@@ -4,7 +4,7 @@ import uvicorn
 
 
 from WebhookScripts.Receiver.src.environment import get_env_key, env_test
-from WebhookScripts.Receiver.src.converts import utc_iso_to_tz_offset
+from WebhookScripts.Receiver.src.converters import utc_iso_to_tz_offset
 from WebhookScripts.Receiver.src.mvtask import get_snap
 from WebhookScripts.Receiver.src.handler import event_handler
 from WebhookScripts.Receiver.src.wxtask import mv_alert_to_wx
