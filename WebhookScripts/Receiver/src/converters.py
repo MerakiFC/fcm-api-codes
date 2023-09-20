@@ -2,7 +2,7 @@ import datetime
 import pytz
 
 
-def epoch_to_aest(epoch_time: float) -> datetime or None:
+def epoch_to_aest(epoch_time) -> datetime or None:
     try:
         tz: str = 'Australia/Brisbane'
         return datetime.datetime.fromtimestamp(epoch_time, pytz.timezone(tz))

@@ -20,7 +20,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     # normalize epoch timestamp to string
     timestamp_epoch: str = (str(int(payload['alertData']['timestamp'])))
     # Convert ISO8601 occurredAt time to AEST string
-    timestamp_aest: str = (str(epoch_to_aest(int(timestamp_epoch))))
+    timestamp_aest: str = (str(epoch_to_aest(epoch_time=int(timestamp_epoch))))
 
     file_dir: str = "snaps"
     abs_path_dir = os.path.join(os.getcwd(), file_dir)
