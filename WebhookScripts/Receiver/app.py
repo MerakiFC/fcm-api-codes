@@ -43,8 +43,6 @@ async def send_motion_alert(request: Request):
 
     except Exception as e:
         raise HTTPException(status_code=409, detail=e)
-    
-
 
 
 @app.post('/alert/wx', description='Description about this endpoint goes here', status_code=200)
@@ -62,6 +60,7 @@ def main() -> None:
     web_service_config = uvicorn.Config("app:app", host=SERVER_IP, port=SERVER_PORT)
     web_service = uvicorn.Server(web_service_config)
     web_service.run()
+
 
 if __name__ == "__main__":
     main()
