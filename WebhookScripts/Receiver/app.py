@@ -24,13 +24,13 @@ def hello() -> str:
     return "Hello, webhook user."
 
 
-@app.post('/whtest', description="Test Endpoint", status_code=200)
+@app.post('/test', description="Test Endpoint", status_code=200)
 async def test_only(request: Request):
     result = await request.json()
     return result
 
 
-@app.post('/mvmotionalert', description='Sends Motion Alert', status_code=200)
+@app.post('/alert/mv', description='Sends Motion Alert', status_code=200)
 async def send_motion_alert(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
     timestamp_aest: str = utc_iso_to_tz_offset(iso_utc=payload.get("sentAt"), offset=tz_offset)
@@ -47,9 +47,8 @@ async def send_motion_alert(request: Request):
     return mv_alert_to_wx(payload=payload, is_recap=True)
 
 
-@app.post('/alerttowx', description='Description about this endpoint goes here', status_code=200)
+@app.post('/alert/wx', description='Description about this endpoint goes here', status_code=200)
 async def alert_to_wx(request: Request):
-
     payload = await request.json()  # Get the JSON payload from the request
     timestamp_aest: str = utc_iso_to_tz_offset(payload.get("sentAt"), tz_offset)
     print(f'---------------\nEvent received. Webhook sent: " {timestamp_aest}, "\n---------------')
@@ -63,7 +62,6 @@ def main() -> None:
     web_service_config = uvicorn.Config("app:app", host=SERVER_IP, port=SERVER_PORT)
     web_service = uvicorn.Server(web_service_config)
     web_service.run()
-
 
 if __name__ == "__main__":
     main()
