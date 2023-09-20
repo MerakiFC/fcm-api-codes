@@ -3,7 +3,7 @@ import os
 import json
 import sys
 
-from WebhookScripts.Receiver.src.Environment import get_env_key
+from WebhookScripts.Receiver.src.environment import get_env_key
 
 meraki_api_url: str = get_env_key("MERAKI_API_URL")
 

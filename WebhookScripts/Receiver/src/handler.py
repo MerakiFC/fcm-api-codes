@@ -1,14 +1,6 @@
-from enum import Enum
-
+from WebhookScripts.Receiver.src.enums import AlertType
 from WebhookScripts.Receiver.src.mvtask import get_snap
 from WebhookScripts.Receiver.src.wxtask import mv_alert_to_wx, event_to_wx
-
-
-# Handler for 3 main events: mvMotionAlert, sensorAutomation, webhookEvent
-
-
-class AlertType(str, Enum):
-    MOTION_ALERT = 'motion_alert'
 
 
 def event_handler(payload: dict):
