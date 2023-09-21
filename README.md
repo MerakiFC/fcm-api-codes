@@ -17,7 +17,8 @@
 ## Idea Board:
     1. ~~Use a third party webhook receiver as a middleware. (idea: use Hookdeck or similar)~~
         ~~Meraki webhooks only support https receivers~~
-    
+
+## Supplemental Information
 ### Hookdeck-cli setup steps:
     a. Follow installation instructions on https://hookdeck.com/cli
     b. run `hookdeck login`
