@@ -3,18 +3,15 @@ import os
 import json
 import sys
 
-from WebhookScripts.Receiver.src.environment import get_env_key
-
-meraki_api_url: str = get_env_key("MERAKI_API_URL")
+from WebhookScripts.Receiver.src.exceptions import HTTPRequestExceptionError
 
 
-def chk_snap_file(str_timestamp_epoch: str, is_recap: bool) -> bool:
+def check_snap_file(str_timestamp_epoch: str, is_recap: bool) -> bool:
 
     # declare snaps/ sub-directory
     file_dir: str = "snaps"
     abs_path_dir: str = os.path.join(os.getcwd(), file_dir)
 
-    # declare filename and path
     if is_recap:
         file_name: str = f'{str_timestamp_epoch}-recap.jpg'
     else:
@@ -56,12 +53,11 @@ def get_img_file(url: str, timestamp_epoch: str, is_recap: bool = False) -> None
         print(f"getImgFile: Success! Snapshot saved as {file_name}")
     else:
         print(f"getImgFile: Error {str(response.status_code)}\nSnapshot download failed.\n")
-        print(response.text)
-        sys.exit(response.status_code)
 
 
 # Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
 def get_snap(payload: dict, is_recap: bool = False) -> str:
+    from WebhookScripts.Receiver.app import MERAKI_API_URL, MERAKI_API_KEY
 
     # Normalize alertData['timestamp'] to int
     timestamp_epoch: str = (str(int(payload.get('alertData').get('timestamp'))))
@@ -72,7 +68,7 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
     else:
         print("getSnap: Processing snapshot request.")
     
-    file_check: bool = chk_snap_file(str_timestamp_epoch=timestamp_epoch, is_recap=is_recap)
+    file_check: bool = check_snap_file(str_timestamp_epoch=timestamp_epoch, is_recap=is_recap)
 
     # Feedback if file exists
     if file_check:
@@ -90,10 +86,8 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
     # Generate snapshot if isRecap is False
     elif not is_recap:
 
-        api_key: str = get_env_key("M_API_KEY")
-
         str_occ_at_iso: str = payload.get('occurredAt')
-        url_gen_snap: str = f"{meraki_api_url}/devices/{payload.get('deviceSerial')}/camera/generateSnapshot"
+        url_gen_snap: str = f"{MERAKI_API_URL}/devices/{payload.get('deviceSerial')}/camera/generateSnapshot"
 
         tx_payload = json.dumps(
             {
@@ -102,7 +96,7 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
             }
         )
         tx_headers: dict = {
-            'X-Cisco-Meraki-API-Key': api_key,
+            'X-Cisco-Meraki-API-Key': MERAKI_API_KEY,
             'Content-Type': 'application/json'
             }
         
@@ -126,20 +120,20 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
 
 
 # Get Videolink to alert footage with timestamp in ISO8601 format
-def mv_vid_link(payload: dict) -> str:
+def get_mv_video_url(serial_number: str, occurred_at: str) -> str:
+    from WebhookScripts.Receiver.app import MERAKI_API_URL, MERAKI_API_KEY
 
-    api_key: str = get_env_key("M_API_KEY")
-
-    url: str = f"{meraki_api_url}/devices/{payload.get('deviceSerial')}/camera/videoLink/?timestamp={payload.get('occurredAt')}"
+    url: str = f"{MERAKI_API_URL}/devices/{serial_number}/camera/videoLink/?timestamp={occurred_at}"
 
     print("mvVidLink: Requesting internal video link...")
 
-    tx_payload: dict = {}
-    tx_headers: dict = {
-        'X-Cisco-Meraki-API-Key': api_key,
+    headers: dict = {
+        'X-Cisco-Meraki-API-Key': MERAKI_API_KEY,
         'Content-Type': 'application/json'
         }
 
-    response = requests.get(url, headers=tx_headers, data=tx_payload)
+    response = requests.get(url, headers=headers)
+    if response and response.status_code == 200:
+        return response.json().get('url')
 
-    return response.json().get('url')
+    raise HTTPRequestExceptionError(f'GET Video URL Error: {url}')

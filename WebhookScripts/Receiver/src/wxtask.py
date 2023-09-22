@@ -1,129 +1,146 @@
 import os
-import sys
 import requests
 from requests_toolbelt import MultipartEncoder
 
-from WebhookScripts.Receiver.src.environment import get_env_key
 from WebhookScripts.Receiver.src.converters import epoch_to_aest, utc_iso_to_tz_offset
-from WebhookScripts.Receiver.src.mvtask import mv_vid_link
+from WebhookScripts.Receiver.src.exceptions import HTTPRequestExceptionError, ConverterExceptionError, \
+    InvalidPayloadExceptionError
+from WebhookScripts.Receiver.src.mvtask import get_mv_video_url
 
-MERAKI_DASHBOARD_URL: str = "https://dashboard.meraki.com"
 
-wx_api_url: str = get_env_key("WX_API_URL")
-wx_token: str = get_env_key("WX_TOKEN")
-wx_room_id: str = get_env_key("WX_ROOM_ID")
-tz_offset = int(get_env_key("TZ_OFFSET"))
+def process_image_file(file_path: str) -> bytes:
+    try:
+        with open(file_path, "rb") as image:
+            return image.read()
+
+    except Exception as e:
+        print("mvAlertToWX File read error: ", str(TypeError) + "\n", str(e))
 
 
 def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
+    from WebhookScripts.Receiver.app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET, MERAKI_DASHBOARD_URL
     
     # normalize epoch timestamp to string
-    timestamp_epoch: str = (str(int(payload['alertData']['timestamp'])))
+    timestamp_epoch: str = str(int(payload.get('alertData').get('timestamp')))
     # Convert ISO8601 occurredAt time to AEST string
-    timestamp_aest: str = (str(epoch_to_aest(epoch_time=int(timestamp_epoch))))
+    timestamp_aest = str(epoch_to_aest(epoch_time=int(timestamp_epoch)))
 
     file_dir: str = "snaps"
-    abs_path_dir = os.path.join(os.getcwd(), file_dir)
+    abs_path_dir: str = os.path.join(os.getcwd(), file_dir)
 
-    if is_recap == 'y':
+    if is_recap:
         file_name = f'{timestamp_epoch}-recap.jpg'
     else:
         file_name = f'{timestamp_epoch}.jpg'
 
     img_file_path: str = os.path.join(abs_path_dir, file_name)
+    attached_image: bytes = process_image_file(file_path=img_file_path)
 
-    # Open image(.jpg) for attachment
-    try:        
-        with open(img_file_path, "rb") as image:
-            attached_image: bytes = image.read()
-            print("mvAlertToWX: Attaching image from\n", img_file_path)
+    image_url: str = payload.get('alertData').get('imageUrl')
 
-    except Exception as e:
-        print("mvAlertToWX File read error: ", str(TypeError) + "\n", str(e))
-        sys.exit(str(e))
-
-    # from alertData['imageUrl'] -- for markdown string use only
-    img_url: str = payload.get('alertData').get('imageUrl')
-
-    if img_url is None:
+    if image_url is None:
         print("Warning: imageUrl not found")
-        img_url = MERAKI_DASHBOARD_URL
+        image_url = MERAKI_DASHBOARD_URL
 
-    # Get videolink and assign to vidUrl
-    vid_url: str = mv_vid_link(payload=payload)
+    video_url: str = get_mv_video_url(serial_number=payload.get('deviceSerial'), occurred_at=payload.get('occurredAt'))
     
     # Create markdown string for transmit payload
     md_body: str = (
-        "### " + payload['alertType'] + " : " + payload['deviceName']
-        + "\n* Network Name: **" + payload['networkName'] + "**"
-        + "\n* Video timestamp: **" + timestamp_aest + "**"
-        + "\n* Attachment **URL**: image [recap](" + img_url + ")"
-        + "\n* **Video Link**: " + vid_url
-        )
+            f"### {payload.get('alertType')} : {payload.get('deviceName')}"
+            f"\n* Network Nme: **{payload.get('networkName')}**"
+            f"\n* Video timestamp: **{timestamp_aest}**"
+            f"\n* Attachment **URL**: image [recap]({image_url})"
+            f"\n* **Video Link**: {video_url}"
+    )
 
     # Markdown feedback send to Webex notification
     print(f"----------\nmvAlertToWX: Markdown Body\n----------\n\n{md_body}\n\n----------\n*eomd*\n----------\n")
     
-    # Build payload multipart attachment and transmit headers
-    mp_payload: MultipartEncoder = MultipartEncoder({
-                "roomId": str(wx_room_id),
-                "text": (payload['alertType'] + " : " + payload['deviceName']),
-                "markdown": md_body,
-                "files": (file_name, attached_image, 'image/jpg')
-                })
-
-    headers: dict = ({
-        'Content-Type': mp_payload.content_type,
-        'Authorization': f'Bearer {wx_token}'
-        })
-
-    # Action:Post to Webex and return response code
-    response = requests.post(wx_api_url, headers=headers, data=mp_payload)
-
-    # Feedback: print response body
-    response_dict: dict = response.json()
-
-    created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tz_offset)
-    print(f"mvAlertToWX: Message sent {created_at}")
-
-    return response_dict
-
-
-def event_to_wx(payload: dict):
-
-    tx_headline: str = f"### {payload.get('alertType')}: {payload.get('deviceName')}"
-
-    occurred_at: str = utc_iso_to_tz_offset(iso_utc=payload.get('occurredAt'), offset=tz_offset)
-
-    tx_content: str = (f"\n* Network Name: **{payload['networkName']}**"
-                       f"\n* Event Occurred: **{occurred_at}**")
-
-    #  Check for presence of alertData object and check if the object is not empty
-    if ('alertData' in payload) and payload.get('alertData'):
-        tx_content = f'{tx_content}\n* Alert Data:\n'
-
-        for k, v in (payload.get('alertData')).items():
-            tx_content = f'{tx_content} * {str(k)}: ** {str(v)} **\n'
-    
     mp_payload: MultipartEncoder = MultipartEncoder(
         {
-            "roomId": str(wx_room_id),
-            "text": f"{payload.get('alertType')}:{payload.get('deviceName')}",
-            "markdown": f'{tx_headline}{tx_content}'
+            "roomId": str(WX_ROOM_ID),
+            "text": f"{payload.get('alertType')}: {payload.get('deviceName')}",
+            "markdown": md_body,
+            "files": (file_name, attached_image, 'image/jpg')
         }
     )
 
-    headers: dict = {
+    headers: dict = ({
         'Content-Type': mp_payload.content_type,
-        'Authorization': f'Bearer {wx_token}'
-        }
+        'Authorization': f'Bearer {WX_TOKEN}'
+        })
 
     # Action:Post to Webex and return response code
-    response = requests.post(wx_api_url, headers=headers, data=mp_payload)
+    response = requests.post(WX_API_URL, headers=headers, data=mp_payload)
 
-    # Feedback: print response body
-    response_dict: dict = response.json()
-    created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tz_offset)
-    print(f"eventToWx: Message sent {created_at}")
+    if response and response.status_code == 200:
+        response_dict: dict = response.json()
 
-    return response_dict
+        created_at: str = utc_iso_to_tz_offset(iso_utc=response_dict.get('created'), offset=TZ_OFFSET)
+        print(f"mvAlertToWX: Message sent {created_at}")
+
+        return response_dict
+
+    raise HTTPRequestExceptionError(f'POST Error: {WX_API_URL}')
+
+
+def event_to_wx(payload: dict):
+    from WebhookScripts.Receiver.app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET
+
+    try:
+        device_name: str = payload.get('deviceName')
+        alert_type: str = payload.get('alertType')
+        occurred_at: str = payload.get('occurredAt')
+        network_name: str = payload.get('networkName')
+
+        payload_is_valid: bool = all(variable is not None for variable in
+                                     (device_name, alert_type, occurred_at, network_name))
+
+        if not payload_is_valid:
+            raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Keys')
+
+        tx_headline: str = f"### {alert_type}: {device_name}"
+
+        event_occured_at: str = utc_iso_to_tz_offset(iso_utc=occurred_at, offset=TZ_OFFSET)
+
+        tx_content: str = (f"\n* Network Name: **{network_name}**"
+                           f"\n* Event Occurred: **{event_occured_at}**")
+
+        print(tx_content)
+
+        #  Check for presence of alertData object and check if the object is not empty
+        if payload.get('alertData'):
+            tx_content = f'{tx_content}\n* Alert Data:\n'
+            alert_data: dict = payload.get('alertData')
+
+            if alert_data:
+                for k, v in alert_data.items():
+                    tx_content = f'{tx_content} * {str(k)}: ** {str(v)} **\n'
+
+        mp_payload: MultipartEncoder = MultipartEncoder(
+            {
+                "roomId": WX_ROOM_ID,
+                "text": f"{alert_type}:{device_name}",
+                "markdown": f'{tx_headline}{tx_content}'
+            }
+        )
+
+        headers: dict = {
+            'Content-Type': mp_payload.content_type,
+            'Authorization': f'Bearer {WX_TOKEN}'
+            }
+
+        response = requests.post(WX_API_URL, headers=headers, data=mp_payload)
+
+        # Feedback: print response body
+        if response and response.status_code == 200:
+            response_dict: dict = response.json()
+            created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=TZ_OFFSET)
+            print(f"eventToWx: Message sent {created_at}")
+
+            return response_dict
+
+        raise HTTPRequestExceptionError(f'POST Error: {WX_API_URL}')
+
+    except ConverterExceptionError as e:
+        raise ConverterExceptionError(e)
