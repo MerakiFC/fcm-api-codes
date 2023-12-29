@@ -2,10 +2,10 @@ import os
 import requests
 from requests_toolbelt import MultipartEncoder
 
-from WebhookScripts.Receiver.src.converters import epoch_to_aest, utc_iso_to_tz_offset
-from WebhookScripts.Receiver.src.exceptions import HTTPRequestExceptionError, ConverterExceptionError, \
+from src.converters import epoch_to_aest, utc_iso_to_tz_offset
+from src.exceptions import HTTPRequestExceptionError, ConverterExceptionError, \
     InvalidPayloadExceptionError
-from WebhookScripts.Receiver.src.mvtask import get_mv_video_url
+from src.mvtask import get_mv_video_url
 
 
 def process_image_file(file_path: str) -> bytes:

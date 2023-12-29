@@ -1,6 +1,6 @@
-from WebhookScripts.Receiver.src.enums import AlertType
-from WebhookScripts.Receiver.src.mvtask import get_snap
-from WebhookScripts.Receiver.src.wxtask import mv_alert_to_wx, event_to_wx
+from src.enums import AlertType
+from src.mvtask import get_snap
+from src.wxtask import mv_alert_to_wx, event_to_wx
 
 
 def event_handler(payload: dict):

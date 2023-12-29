@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pytz
 
-from WebhookScripts.Receiver.src.exceptions import ConverterExceptionError
+from src.exceptions import ConverterExceptionError
 
 
 def epoch_to_aest(epoch_time, timezone='Australia/Brisbane') -> datetime:

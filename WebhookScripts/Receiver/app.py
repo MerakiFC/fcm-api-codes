@@ -4,15 +4,15 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
-from WebhookScripts.Receiver.src.converters import utc_iso_to_tz_offset
-from WebhookScripts.Receiver.src.mvtask import get_snap
-from WebhookScripts.Receiver.src.handler import event_handler
-from WebhookScripts.Receiver.src.wxtask import mv_alert_to_wx
+from src.converters import utc_iso_to_tz_offset
+from src.mvtask import get_snap
+from src.handler import event_handler
+from src.wxtask import mv_alert_to_wx
 
 use_env_file: bool = load_dotenv()
 
-SERVER_IP: str = "0.0.0.0"
-SERVER_PORT: int = 8116
+#SERVER_IP: str = "0.0.0.0"
+#SERVER_PORT: int = 8116
 
 # To check SWAGGER Docs open your browser on http://127.0.0.1:8116/docs
 app: FastAPI = FastAPI(title="WebHookScripts API", openapi_url="/openapi.json")

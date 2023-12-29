@@ -3,7 +3,7 @@ import os
 import json
 import sys
 
-from WebhookScripts.Receiver.src.exceptions import HTTPRequestExceptionError
+from src.exceptions import HTTPRequestExceptionError
 
 
 def check_snap_file(str_timestamp_epoch: str, is_recap: bool) -> bool:

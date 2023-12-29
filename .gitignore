@@ -1,9 +1,11 @@
 *.log
 *.env
 *code-workspace*
+*test*
 WebhookScripts/Guides/
 WebhookScripts/Payload/
 WebhookScripts/*.json
 *__pycache__*
 WebhookScripts/Receiver/snaps/
 wh_rcvr/
+fastapi/
