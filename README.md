@@ -1,7 +1,7 @@
 # --FCM Project Log--
 
 ## Components:
-    1. Webhook receiver front end (Flask)
+    1. Webhook receiver front end (Uvicorn/FastAPI)
     2. Webhook event handler script
     3. MV Task script
     4. Message sender script (currently supports Webex only)
