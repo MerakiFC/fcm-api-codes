@@ -57,7 +57,7 @@ def get_img_file(url: str, timestamp_epoch: str, is_recap: bool = False) -> None
 
 # Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
 def get_snap(payload: dict, is_recap: bool = False) -> str:
-    from WebhookScripts.Receiver.app import MERAKI_API_URL, MERAKI_API_KEY
+    from app import MERAKI_API_URL, MERAKI_API_KEY
 
     # Normalize alertData['timestamp'] to int
     timestamp_epoch: str = (str(int(payload.get('alertData').get('timestamp'))))
@@ -121,7 +121,7 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
 
 # Get Videolink to alert footage with timestamp in ISO8601 format
 def get_mv_video_url(serial_number: str, occurred_at: str) -> str:
-    from WebhookScripts.Receiver.app import MERAKI_API_URL, MERAKI_API_KEY
+    from app import MERAKI_API_URL, MERAKI_API_KEY
 
     url: str = f"{MERAKI_API_URL}/devices/{serial_number}/camera/videoLink/?timestamp={occurred_at}"
 

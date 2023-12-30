@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     ports:
-      - 8116:8116
+      - 8216:8216
     volumes:
       - snaps-data:/Receiver/snaps
     networks:

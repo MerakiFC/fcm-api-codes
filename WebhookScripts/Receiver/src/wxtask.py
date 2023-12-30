@@ -18,7 +18,7 @@ def process_image_file(file_path: str) -> bytes:
 
 
 def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
-    from WebhookScripts.Receiver.app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET, MERAKI_DASHBOARD_URL
+    from app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET, MERAKI_DASHBOARD_URL
     
     # normalize epoch timestamp to string
     timestamp_epoch: str = str(int(payload.get('alertData').get('timestamp')))
@@ -47,7 +47,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     # Create markdown string for transmit payload
     md_body: str = (
             f"### {payload.get('alertType')} : {payload.get('deviceName')}"
-            f"\n* Network Nme: **{payload.get('networkName')}**"
+            f"\n* Network Name: **{payload.get('networkName')}**"
             f"\n* Video timestamp: **{timestamp_aest}**"
             f"\n* Attachment **URL**: image [recap]({image_url})"
             f"\n* **Video Link**: {video_url}"
@@ -85,7 +85,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
 
 
 def event_to_wx(payload: dict):
-    from WebhookScripts.Receiver.app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET
+    from app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET
 
     try:
         device_name: str = payload.get('deviceName')
