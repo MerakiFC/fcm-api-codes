@@ -1,4 +1,4 @@
-from src.enums import AlertType
+from src.payloadEnums import alertTypeId
 from src.mvtask import get_snap
 from src.wxtask import mv_alert_to_wx, event_to_wx
 
@@ -6,7 +6,7 @@ from src.wxtask import mv_alert_to_wx, event_to_wx
 def event_handler(payload: dict):
     print("MV Motion Alert\n---------------")
 
-    if payload.get('alertTypeId') == AlertType.MOTION_ALERT.value:
+    if payload.get('alertTypeId') == alertTypeId.MOTION_ALERT.value:
         # define mvMotionAlert process
 
         try:

@@ -1,7 +1,11 @@
 version: '3'
+
+##Dev Note: last working version using Flask engine. Subsequent development will use FastAPI/Uvicorn and will have
+##  updated naming for docker compose services. <eom>
+
 services:
   wh_rcvr:
-    image: "pandaxs/wh_rcvr:latest"
+    image: "pandaxs/wh_rcvr:v0.5"
     container_name: webhook_receiver
     env_file:
       - .env

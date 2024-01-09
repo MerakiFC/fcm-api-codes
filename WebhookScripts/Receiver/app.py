@@ -12,7 +12,7 @@ from src.wxtask import mv_alert_to_wx
 use_env_file: bool = load_dotenv()
 
 SERVER_IP: str = "0.0.0.0"
-SERVER_PORT: int = 8216
+SERVER_PORT: int = 8220
 
 # To check SWAGGER Docs open your browser on http://127.0.0.1:8216/docs
 app: FastAPI = FastAPI(title="WebHookScripts API", openapi_url="/openapi.json")
@@ -54,11 +54,11 @@ async def send_motion_alert(request: Request):
         raise HTTPException(status_code=409, detail=e)
 
 
-@app.post('/alert/wx', description='Description about this endpoint goes here', status_code=200)
+@app.post('/alert/wx', description='Meraki Webhook: Event handler notification sent via Webex', status_code=200)
 async def alert_to_wx(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
     timestamp_aest: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
-    print(f'---------------\nEvent received. Webhook sent: " {timestamp_aest}, "\n---------------')
+    print(f'---------------\nEvent received. Webhook sent: {timestamp_aest}\n---------------')
 
     return event_handler(payload=payload)
 

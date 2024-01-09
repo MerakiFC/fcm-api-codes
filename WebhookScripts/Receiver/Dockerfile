@@ -16,7 +16,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Port number used on app.py
-EXPOSE 8116
+EXPOSE 8220
 
 # Set the command to run your Python application
 CMD ["python3", "app.py"]
