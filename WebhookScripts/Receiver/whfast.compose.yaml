@@ -32,7 +32,6 @@ services:
 networks:
   network1:
     name: webhookdeck
-    external: true
 
     
 volumes:
