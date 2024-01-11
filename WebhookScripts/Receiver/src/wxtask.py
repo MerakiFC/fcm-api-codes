@@ -49,7 +49,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
             f"### {payload.get('alertType')} : {payload.get('deviceName')}"
             f"\n* Network Name: **{payload.get('networkName')}**"
             f"\n* Video timestamp: **{timestamp_aest}**"
-            f"\n* Attachment **URL**: image [recap]({image_url})"
+            f"\n* **Attachment URL**: image [recap]({image_url})"
             f"\n* **Video Link**: {video_url}"
     )
 
@@ -115,7 +115,7 @@ def event_to_wx(payload: dict):
 
             if alert_data:
                 for k, v in alert_data.items():
-                    tx_content = f'{tx_content} * {str(k)}: ** {str(v)} **\n'
+                    tx_content = f'{tx_content}\n * {str(k)}: ** {str(v)} **\n'
 
         mp_payload: MultipartEncoder = MultipartEncoder(
             {
