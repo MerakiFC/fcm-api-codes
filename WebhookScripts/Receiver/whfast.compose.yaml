@@ -1,7 +1,7 @@
 version: '3'
 services:
   whfast:
-    image: "pandaxs/whfast:v0.1"
+    image: "pandaxs/whfast:latest"
     container_name: whfast
     env_file:
       - .env.prod
