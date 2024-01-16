@@ -60,7 +60,13 @@ async def alert_to_wx(request: Request):
     timestamp_aest: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
     print(f'---------------\nEvent received. Webhook sent: {timestamp_aest}\n---------------')
 
-    return event_handler(payload=payload)
+    try:
+        return event_handler(payload=payload)
+
+    except KeyError as e:
+        raise HTTPException(status_code=500, detail=(f'Invalid Key Error'))
+    except Exception as e:
+        raise HTTPException(status_code=409, detail=str(e))
 
 
 def main() -> None:

@@ -5,7 +5,6 @@ import sys
 
 from src.exceptions import HTTPRequestExceptionError
 
-
 def check_snap_file(str_timestamp_epoch: str, is_recap: bool) -> bool:
 
     # declare snaps/ sub-directory
@@ -28,9 +27,8 @@ def check_snap_file(str_timestamp_epoch: str, is_recap: bool) -> bool:
     print(f'check_snap_file: {str(file_name)} not found. Proceed...')
     return False
 
-
+# Use imageUrl to download image file
 def get_img_file(url: str, timestamp_epoch: str, is_recap: bool = False) -> None:
-
     print("get_img_file: Download and save snapshot.")
 
     # declare snaps/ sub-directory
@@ -58,6 +56,13 @@ def get_img_file(url: str, timestamp_epoch: str, is_recap: bool = False) -> None
 # Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
 def get_snap(payload: dict, is_recap: bool = False) -> str:
     from app import MERAKI_API_URL, MERAKI_API_KEY
+    
+    # Check environment keys are present and not None
+    envkeys_valid: bool = all(variable is not None for variable in 
+                              (MERAKI_API_KEY, MERAKI_API_URL))
+    if not envkeys_valid:
+        print(f'Key Error: One or more Meraki keys are missing or invalid')
+        raise KeyError
 
     # Normalize alertData['timestamp'] to int
     timestamp_epoch: str = (str(int(payload.get('alertData').get('timestamp'))))
@@ -122,6 +127,13 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
 # Get Videolink to alert footage with timestamp in ISO8601 format
 def get_mv_video_url(serial_number: str, occurred_at: str) -> str:
     from app import MERAKI_API_URL, MERAKI_API_KEY
+
+    # Check environment keys are present and not None
+    envkeys_valid: bool = all(variable is not None for variable in 
+                              (MERAKI_API_KEY, MERAKI_API_URL))
+    if not envkeys_valid:
+        print(f'Key Error: One or more Meraki keys are missing or invalid')
+        raise KeyError
 
     url: str = f"{MERAKI_API_URL}/devices/{serial_number}/camera/videoLink/?timestamp={occurred_at}"
 
