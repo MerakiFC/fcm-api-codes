@@ -2,7 +2,7 @@ version: '3'
 services:
   bnelabwhfast:
     image: "pandaxs/whfast:latest"
-    container_name: whfast
+    container_name: bnelab_whfast
     env_file:
       - .env.bnelab
     ports:
@@ -14,7 +14,7 @@ services:
 
   bnelab-hkdk-wx:
     image: "hookdeck/hookdeck-cli"
-    container_name: hkdk-wx
+    container_name: bnelab_hkdk-wx
     environment:
       - TZ=Australia/Brisbane
     entrypoint: ["/bin/sh","-c"]
