@@ -30,8 +30,7 @@ services:
 
 networks:
   network1:
-    name: webhookdeck
-
+    name: bnelab-whkdk
     
 volumes:
   snaps-data:
