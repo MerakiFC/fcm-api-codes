@@ -22,7 +22,7 @@ services:
     - |
        /bin/hookdeck version
        [ -f $HOME/.config/hookdeck/config-lab.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
-       /bin/hookdeck listen http://whfast:10987 bnelab-webhooks
+       /bin/hookdeck listen http://bnelab_whfast:10987 bnelab-webhooks
     volumes:
       - $HOME/.config/hookdeck/bnelab:/root/.config/hookdeck  # persist hookdeck config from local config directory
     networks:
