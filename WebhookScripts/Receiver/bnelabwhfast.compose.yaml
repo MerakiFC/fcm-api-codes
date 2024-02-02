@@ -8,7 +8,7 @@ services:
     ports:
       - 10987:10987
     volumes:
-      - snaps-data:/Receiver/snaps
+      - snaps-lab:/Receiver/snaps
     networks:
       - network1
 
@@ -33,4 +33,4 @@ networks:
     name: bnelab-whkdk
     
 volumes:
-  snaps-data:
+  snaps-lab:
