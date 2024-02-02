@@ -12,7 +12,7 @@ from src.wxtask import mv_alert_to_wx
 use_env_file: bool = load_dotenv()
 
 SERVER_IP: str = "0.0.0.0"
-SERVER_PORT: int = 8220
+SERVER_PORT: int = int(os.getenv("SERVER_PORT"))
 
 # To check SWAGGER Docs open your browser on http://127.0.0.1:8216/docs
 app: FastAPI = FastAPI(title="WebHookScripts API", openapi_url="/openapi.json")
