@@ -20,7 +20,8 @@ app: FastAPI = FastAPI(title="WebHookScripts API", openapi_url="/openapi.json")
 
 TZ_OFFSET: int = int(os.getenv("TZ_OFFSET"))
 MERAKI_API_URL: str = os.getenv("MERAKI_API_URL")
-MERAKI_API_KEY: str = os.getenv("M_API_KEY")
+M_API_KEY: str = os.getenv("M_API_KEY")
+M_ORG_ID: str = os.getenv("M_ORG_ID")
 WX_API_URL: str = os.getenv("WX_API_URL")
 WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
 WX_TOKEN: str = os.getenv("WX_TOKEN")
@@ -38,7 +39,8 @@ async def test_only(request: Request):
     result = await request.json()
     return result
 
-
+## Commenting out: For deprecation (03/02/2024)
+"""
 @app.post('/alert/mv', description='Sends Motion Alert', status_code=200)
 async def send_motion_alert(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
@@ -52,13 +54,13 @@ async def send_motion_alert(request: Request):
 
     except Exception as e:
         raise HTTPException(status_code=409, detail=e)
-
+"""
 
 @app.post('/alert/wx', description='Meraki Webhook: Event handler notification sent via Webex', status_code=200)
 async def alert_to_wx(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
     timestamp_aest: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
-    print(f'---------------\nEvent received. Webhook sent: {timestamp_aest}\n---------------')
+    print(f'---------------\n(log) Event received: {timestamp_aest}\n---------------')
 
     try:
         return event_handler(payload=payload)
@@ -71,10 +73,10 @@ async def alert_to_wx(request: Request):
 
 def main() -> None:
     if not use_env_file:
-        print(f"Using OS Environment.\nMeraki URL: {str(os.getenv('MERAKI_API_URL'))}")
+        print(f"Using OS Environment.\nMeraki API: {str(os.getenv('MERAKI_API_URL'))}\nOrgID: {M_ORG_ID}")
 
     elif use_env_file:
-        print(f"Using .env \nMeraki URL: {os.getenv('MERAKI_API_URL')}")
+        print(f"Using .env \nMeraki API: {os.getenv('MERAKI_API_URL')}\nOrgID: {M_ORG_ID}")
 
     web_service_config = uvicorn.Config("app:app", host=SERVER_IP, port=SERVER_PORT)
     web_service = uvicorn.Server(web_service_config)

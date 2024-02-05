@@ -55,14 +55,16 @@ def get_img_file(url: str, timestamp_epoch: str, is_recap: bool = False) -> None
 
 # Generate Snapshot from input timestamp (in ISO-8601 format) from webhook payload
 def get_snap(payload: dict, is_recap: bool = False) -> str:
-    from app import MERAKI_API_URL, MERAKI_API_KEY
+    
+    from app import MERAKI_API_URL, M_API_KEY
     
     # Check environment keys are present and not None
     envkeys_valid: bool = all(variable is not None for variable in 
-                              (MERAKI_API_KEY, MERAKI_API_URL))
+                                (M_API_KEY, MERAKI_API_URL))
     if not envkeys_valid:
         print(f'Key Error: One or more Meraki keys are missing or invalid')
         raise KeyError
+    
 
     # Normalize alertData['timestamp'] to int
     timestamp_epoch: str = (str(int(payload.get('alertData').get('timestamp'))))
@@ -101,7 +103,7 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
             }
         )
         tx_headers: dict = {
-            'X-Cisco-Meraki-API-Key': MERAKI_API_KEY,
+            'X-Cisco-Meraki-API-Key': M_API_KEY,
             'Content-Type': 'application/json'
             }
         
@@ -126,21 +128,24 @@ def get_snap(payload: dict, is_recap: bool = False) -> str:
 
 # Get Videolink to alert footage with timestamp in ISO8601 format
 def get_mv_video_url(serial_number: str, occurred_at: str) -> str:
-    from app import MERAKI_API_URL, MERAKI_API_KEY
+    
+    
+    from app import MERAKI_API_URL, M_API_KEY
 
     # Check environment keys are present and not None
     envkeys_valid: bool = all(variable is not None for variable in 
-                              (MERAKI_API_KEY, MERAKI_API_URL))
+                                (M_API_KEY, MERAKI_API_URL))
     if not envkeys_valid:
         print(f'Key Error: One or more Meraki keys are missing or invalid')
         raise KeyError
+    
 
     url: str = f"{MERAKI_API_URL}/devices/{serial_number}/camera/videoLink/?timestamp={occurred_at}"
 
     print("get_mv_video_url: Requesting internal video link...")
 
     headers: dict = {
-        'X-Cisco-Meraki-API-Key': MERAKI_API_KEY,
+        'X-Cisco-Meraki-API-Key': M_API_KEY,
         'Content-Type': 'application/json'
         }
 

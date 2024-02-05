@@ -19,7 +19,7 @@ def process_image_file(file_path: str) -> bytes:
             return image.read()
 
     except Exception as e:
-        print("mvAlertToWX File read error: ", str(TypeError) + "\n", str(e))
+        print("(log) process_image_file read error: ", str(TypeError) + "\n", str(e))
 
 
 def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
@@ -27,7 +27,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     
     # Check environment keys are present and not None
     envkeys_valid: bool = all(variable is not None for variable in 
-                              (WX_API_URL, WX_ROOM_ID, WX_TOKEN))
+                                (WX_API_URL, WX_ROOM_ID, WX_TOKEN))
     if not envkeys_valid:
         print(f'Key Error: some WX environment keys are missing or invalid')
         raise KeyError
@@ -58,15 +58,15 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     
     # Create markdown string for transmit payload
     md_body: str = (
-            f"### {payload.get('alertType')} : {payload.get('deviceName')}"
+            f"## {payload.get('alertType')} : {payload.get('deviceName')}"
+            f"\n### Event timestamp: {timestamp_aest}\n --- \n"
             f"\n* Network Name: **{payload.get('networkName')}**"
-            f"\n* Video timestamp: **{timestamp_aest}**"
-            f"\n* **Attachment URL**: image [recap]({image_url})"
-            f"\n* **Video Link**: {video_url}"
+            f"\n* Attachment URL: [image recap]({image_url})"
+            f"\n* Video [Link]({video_url}) on dashboard"
     )
 
     # Markdown feedback send to Webex notification
-    print(f"----------\nmvAlertToWX: Markdown Body\n----------\n\n{md_body}\n\n----------\n*eomd*\n----------\n")
+    print(f"----------\nmv_alert_to_wx: Markdown Body\n----------\n\n{md_body}\n\n----------\n*eomd*\n----------\n")
     
     mp_payload: MultipartEncoder = MultipartEncoder(
         {
@@ -89,7 +89,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
         if response and response.status_code == 200:
             response_dict: dict = response.json()
             created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=TZ_OFFSET)
-            print(f"eventToWx: Message sent {created_at}")
+            print(f"mv_alert_to_wx: Message sent {created_at}")
 
             return response_dict
 
@@ -104,7 +104,7 @@ def event_to_wx(payload: dict):
     
     # Check environment keys are present and not None
     envkeys_valid: bool = all(variable is not None for variable in 
-                              (WX_API_URL, WX_ROOM_ID, WX_TOKEN))
+                                (WX_API_URL, WX_ROOM_ID, WX_TOKEN))
     if not envkeys_valid:
         print(f'Key Error: some WX environment keys are missing or invalid')
         raise KeyError
@@ -116,28 +116,28 @@ def event_to_wx(payload: dict):
         network_name: str = payload.get('networkName')
 
         payload_is_valid: bool = all(variable is not None for variable in
-                                     (device_name, alert_type, occurred_at, network_name))
+                                        (device_name, alert_type, occurred_at, network_name))
 
         if not payload_is_valid:
             raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Keys')
 
-        tx_headline: str = f"### {alert_type}: {device_name}"
+        tx_headline: str = f"## {alert_type}: {device_name}\n"
 
         event_occured_at: str = utc_iso_to_tz_offset(iso_utc=occurred_at, offset=TZ_OFFSET)
 
-        tx_content: str = (f"\n* Network Name: **{network_name}**"
-                           f"\n* Event Occurred: **{event_occured_at}**")
-
-        print(tx_content)
+        tx_content: str = (f"\n### Network: {network_name}"
+                            f"\n### Timestamp: {event_occured_at}\n --- \n")
 
         #  Check for presence of alertData object and check if the object is not empty
         if payload.get('alertData'):
-            tx_content = f'{tx_content}\n* Alert Data:\n'
+            tx_content = f'{tx_content}\n### Alert Data:\n'
             alert_data: dict = payload.get('alertData')
 
             if alert_data:
                 for k, v in alert_data.items():
-                    tx_content = f'{tx_content}\n * {str(k)}: ** {str(v)} **\n'
+                    tx_content = f'{tx_content}\n * {str(k)}:  {str(v)} \n'
+        
+        print(tx_headline,tx_content)
 
         mp_payload: MultipartEncoder = MultipartEncoder(
             {
