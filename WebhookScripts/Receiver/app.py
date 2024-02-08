@@ -56,11 +56,12 @@ async def send_motion_alert(request: Request):
         raise HTTPException(status_code=409, detail=e)
 """
 
-@app.post('/alert/wx', description='Meraki Webhook: Event handler notification sent via Webex', status_code=200)
+@app.post('/alert/wx', status_code=200,
+            description='Meraki Webhook: Event handler notification sent via Webex')
 async def alert_to_wx(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
-    timestamp_aest: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
-    print(f'---------------\n(log) Event received: {timestamp_aest}\n---------------')
+    timestamp_iso: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
+    print(f'---------------\n(log) Event received: {timestamp_iso}\n---------------')
 
     try:
         return event_handler(payload=payload)
@@ -73,7 +74,9 @@ async def alert_to_wx(request: Request):
 
 def main() -> None:
     if not use_env_file:
-        print(f"Using OS Environment.\nMeraki API: {str(os.getenv('MERAKI_API_URL'))}\nOrgID: {M_ORG_ID}")
+        print(  f"Using OS Environment.\n"
+                f"Meraki API: {str(os.getenv('MERAKI_API_URL'))}\nOrgID: {M_ORG_ID}"
+            )
 
     elif use_env_file:
         print(f"Using .env \nMeraki API: {os.getenv('MERAKI_API_URL')}\nOrgID: {M_ORG_ID}")

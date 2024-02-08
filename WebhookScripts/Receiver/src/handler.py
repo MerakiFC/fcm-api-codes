@@ -9,19 +9,18 @@ class eventTypes:
     
     def motion_alert(self, payload: dict):
         import src.motionAlert        
-        print("Motion alert event trigger")
+        print("(log) Motion alert event trigger")
         return src.motionAlert.event_processor(payload)
         
     def settings_changed(self, payload: dict):
-        print("Settings changed event trigger")
+        print("(log) Settings changed event trigger")
         print(payload['alertTypeId'])
         
     def sensor_automation(self, payload: dict):
-        print("Sensor automation event trigger")
+        print("(log) Sensor automation event trigger")
         print(payload['alertTypeId'])
     
     def event_match(self, payload: dict):
-
         event_dict: dict = {
             "motion_alert": self.motion_alert,
             "settings_changed": self.settings_changed,
@@ -30,6 +29,29 @@ class eventTypes:
         event_call = event_dict.get(self.alertType)
         if event_call is not None:
             return event_call(payload=payload)
+
+class RuntimeLoader():
+    def __init__(self):
+        import os
+
+        self.TZ_OFFSET: int = int(os.getenv("TZ_OFFSET"))
+        self.MERAKI_API_URL: str = os.getenv("MERAKI_API_URL")
+        self.M_API_KEY: str = os.getenv("M_API_KEY")
+        self.M_ORG_ID: str = os.getenv("M_ORG_ID")
+        self.WX_API_URL: str = os.getenv("WX_API_URL")
+        self.WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
+        self.WX_TOKEN: str = os.getenv("WX_TOKEN")
+
+    def env_check(self):
+        envkeys_valid: bool = all(variable is not None for variable in 
+                            (self.WX_ROOM_ID, self.WX_TOKEN, self.M_API_KEY))
+        if not envkeys_valid:
+            print(f'Key Error: some environment keys are missing or invalid')
+            raise KeyError
+        print ("(log) env_check: valid")
+        return envkeys_valid
+
+
 
 ## Payload validation and environment check
 def payload_and_env_check(payload: dict):

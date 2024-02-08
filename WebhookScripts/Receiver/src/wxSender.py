@@ -3,7 +3,7 @@ from src.exceptions import HTTPRequestExceptionError, InvalidPayloadExceptionErr
 
 class wxMessage:
 
-    def __init__(self, tx_headline, tx_content):
+    def __init__(self, tx_headline: str, tx_content: str):
         self.tx_headline = tx_headline
         self.tx_content = tx_content
 
