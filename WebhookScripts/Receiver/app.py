@@ -17,16 +17,14 @@ SERVER_PORT: int = int(os.getenv("SERVER_PORT"))
 # To check SWAGGER Docs open your browser on http://127.0.0.1:8216/docs
 app: FastAPI = FastAPI(title="WebHookScripts API", openapi_url="/openapi.json")
 
-
 TZ_OFFSET: int = int(os.getenv("TZ_OFFSET"))
 MERAKI_API_URL: str = os.getenv("MERAKI_API_URL")
-M_API_KEY: str = os.getenv("M_API_KEY")
 M_ORG_ID: str = os.getenv("M_ORG_ID")
-WX_API_URL: str = os.getenv("WX_API_URL")
-WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
-WX_TOKEN: str = os.getenv("WX_TOKEN")
-
-MERAKI_DASHBOARD_URL: str = "https://dashboard.meraki.com"
+#M_API_KEY: str = os.getenv("M_API_KEY")
+#WX_API_URL: str = os.getenv("WX_API_URL")
+#WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
+#WX_TOKEN: str = os.getenv("WX_TOKEN")
+#MERAKI_DASHBOARD_URL: str = "https://dashboard.meraki.com"
 
 
 @app.get("/", description="Greetings", response_class=PlainTextResponse, status_code=200)
@@ -60,8 +58,8 @@ async def send_motion_alert(request: Request):
             description='Meraki Webhook: Event handler notification sent via Webex')
 async def alert_to_wx(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
-    timestamp_iso: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
-    print(f'---------------\n(log) Event received: {timestamp_iso}\n---------------')
+    sent_at_timestamp_iso: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
+    print(f'---------------\n(log) Event Sent At: {sent_at_timestamp_iso}\n---------------')
 
     try:
         return event_handler(payload=payload)

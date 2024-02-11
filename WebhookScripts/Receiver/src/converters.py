@@ -55,7 +55,7 @@ def utc_iso_to_tz_offset(iso_utc: str, offset: int) -> str:
         # Convert the result back to ISO 8601 format
         converted_time_iso = converted_time.isoformat()
 
-        return str(converted_time_iso).replace('+00:00', ' (UTC{:+d})'.format(offset))
+        return str(converted_time_iso).replace('+00:00', '(UTC{:+d})'.format(offset))
 
     except Exception as e:
         raise ConverterExceptionError(f"Time Conversion Error: {e}")

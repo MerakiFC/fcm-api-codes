@@ -1,41 +1,50 @@
 from src.converters import epoch_to_aest, utc_iso_to_tz_offset
 from src.exceptions import HTTPRequestExceptionError, InvalidPayloadExceptionError
+from src.handler import RuntimeLoader
+from src.mv_api_tasks import img_file_path
+from requests_toolbelt import MultipartEncoder
 
-class wxMessage:
+import requests
 
-    def __init__(self, tx_headline: str, tx_content: str):
-        self.tx_headline = tx_headline
-        self.tx_content = tx_content
+def process_image_file(file_path: str) -> bytes:
+    try:
+        with open(file_path, "rb") as image:
+            return image.read()
 
+    except Exception as e:
+        print("(log) process_image_file read error: ", str(TypeError) + "\n", str(e))
 
-    def tx_header_format(self, payload: dict):
-        pass
+#This function will perform the Webex POST. Input:? Return: Webex response body
+def outbox(md_body, timestamp_epoch):
+    tx_runtime = RuntimeLoader()
+    file_name = f'{timestamp_epoch}.jpg'
+    file_loc = img_file_path(file_name)
+
+    attached_image = process_image_file(file_path=file_loc)
     
-    def tx_content_format(self, payload: dict):
+    mp_payload: MultipartEncoder = MultipartEncoder(
+                {
+                    "roomId": tx_runtime.WX_ROOM_ID,
+                    #"text": f"{payload.get('alertType')}: {payload.get('deviceName')}",
+                    "markdown": md_body,
+                    "files": (file_name, attached_image, 'image/jpg')
+                }
+            )
+    headers: dict = ({
+                'Content-Type': mp_payload.content_type,
+                'Authorization': f'Bearer {tx_runtime.WX_TOKEN}'
+                })
+    try:
+        response = requests.post(tx_runtime.WX_API_URL, headers=headers, data=mp_payload)
+        # Feedback: print response body
+        if response and response.status_code == 200:
+            response_dict: dict = response.json()
+            created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tx_runtime.TZ_OFFSET)
+            print(f"(log) Webex Sender: Message sent {created_at}")
 
-        self.device_name: str = payload.get('deviceName')
-        self.alert_type: str = payload.get('alertType')
-        self.occurred_at: str = payload.get('occurredAt')
-        self.network_name: str = payload.get('networkName')
-        
-        try:
-            tx_headline: str = f"## {alert_type}: {device_name}\n"
+            return response_dict
 
-            event_occured_at: str = utc_iso_to_tz_offset(iso_utc=occurred_at, offset=TZ_OFFSET)
-
-            tx_content: str = (f"\n### Network: {network_name}"
-                                f"\n### Timestamp: {event_occured_at}\n --- \n")
-
-            #  Check for presence of alertData object and check if the object is not empty
-            if payload.get('alertData'):
-                tx_content = f'{tx_content}\n### Alert Data:\n'
-                alert_data: dict = payload.get('alertData')
-
-                if alert_data:
-                    for k, v in alert_data.items():
-                        tx_content = f'{tx_content}\n * {str(k)}:  {str(v)} \n'
-
-            print(tx_headline,tx_content)
-
-        except HTTPRequestExceptionError as e:
-            raise HTTPRequestExceptionError(e)
+        raise HTTPRequestExceptionError(f'POST Error: {tx_runtime.WX_API_URL}')
+    
+    except HTTPRequestExceptionError:
+        raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))

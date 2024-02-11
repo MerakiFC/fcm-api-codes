@@ -1,3 +1,4 @@
+import os, json
 from src.exceptions import InvalidPayloadExceptionError
 from src.mvtask import get_snap
 from src.wxtask import mv_alert_to_wx, event_to_wx
@@ -9,15 +10,15 @@ class eventTypes:
     
     def motion_alert(self, payload: dict):
         import src.motionAlert        
-        print("(log) Motion alert event trigger")
+        print("Motion alert event")
         return src.motionAlert.event_processor(payload)
         
     def settings_changed(self, payload: dict):
-        print("(log) Settings changed event trigger")
+        print("Settings changed event")
         print(payload['alertTypeId'])
         
     def sensor_automation(self, payload: dict):
-        print("(log) Sensor automation event trigger")
+        print("Sensor automation event")
         print(payload['alertTypeId'])
     
     def event_match(self, payload: dict):
@@ -26,14 +27,14 @@ class eventTypes:
             "settings_changed": self.settings_changed,
             "sensor_automation": self.sensor_automation
         }
-        event_call = event_dict.get(self.alertType)
-        if event_call is not None:
-            return event_call(payload=payload)
+        event_matched = event_dict.get(self.alertType)
+        if event_matched and not None:
+            return event_matched(payload=payload)
+        else:
+            return event_handler(payload)
 
 class RuntimeLoader():
     def __init__(self):
-        import os
-
         self.TZ_OFFSET: int = int(os.getenv("TZ_OFFSET"))
         self.MERAKI_API_URL: str = os.getenv("MERAKI_API_URL")
         self.M_API_KEY: str = os.getenv("M_API_KEY")
@@ -42,51 +43,49 @@ class RuntimeLoader():
         self.WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
         self.WX_TOKEN: str = os.getenv("WX_TOKEN")
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
     def env_check(self):
-        envkeys_valid: bool = all(variable is not None for variable in 
-                            (self.WX_ROOM_ID, self.WX_TOKEN, self.M_API_KEY))
-        if not envkeys_valid:
-            print(f'Key Error: some environment keys are missing or invalid')
-            raise KeyError
-        print ("(log) env_check: valid")
-        return envkeys_valid
-
-
-
-## Payload validation and environment check
-def payload_and_env_check(payload: dict):
-    
-    try:
-        from app import WX_TOKEN, WX_ROOM_ID, M_API_KEY
-        envkeys_valid: bool = all(variable is not None for variable in 
-                                    (WX_ROOM_ID, WX_TOKEN, M_API_KEY))
-        if not envkeys_valid:
-            print(f'Key Error: some environment keys are missing or invalid')
-            raise KeyError
-        # Check payload keys are present and not None
-        device_name: str = payload.get('deviceName')
-        alert_type: str = payload.get('alertType')
-        occurred_at: str = payload.get('occurredAt')
-        network_name: str = payload.get('networkName')
-
-        payload_is_valid: bool = all(variable is not None for variable in
-                                        (device_name, alert_type, occurred_at, network_name))
+        try:
+            envkeys_valid: bool = all(variable is not None for variable in 
+                                (self.MERAKI_API_URL, self.WX_TOKEN, self.M_API_KEY))
+            if not envkeys_valid:
+                print(f'Key Error: some environment keys are missing or invalid')
+                raise KeyError
+            return (f'Env keys valid: {envkeys_valid}')
         
-        if not payload_is_valid:
-            raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Keys')
+        except Exception as e:
+            print(f'env_check failed.\n {e}')
 
-        print("(log) env and payload check: Valid")
-    
-    except Exception as e:
-        print(f'Environment check failed.\n {e}')
+    def key_dict(self):
+        return json.dumps(self.__dict__)
+
+    ## Payload validation check
+    def payload_check(self, payload: dict):
+        try:
+            # Check payload k-v are present and not None
+            self.device_name: str = payload.get('deviceName')
+            self.alert_type: str = payload.get('alertType')
+            self.occurred_at: str = payload.get('occurredAt')
+            self.network_name: str = payload.get('networkName')
+
+            payload_is_valid: bool = all(variable is not None for variable in
+                            (self.device_name, self.alert_type, self.occurred_at, self.network_name))
+            if not payload_is_valid:
+                raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Keys')
+            return (f"Payload valid: {payload_is_valid}")
+        except Exception as e:
+            print(f'payload_check failed.\n {e}')
 
 
 ## This function is under development
 ## Triage the incoming payload based on alert type
 def webhook_triage(payload: dict):
     print("(log) Webhook Triage\n---------------")
-    
-    payload_and_env_check(payload)
+
+    runtime_env = RuntimeLoader()
+    print(f'{runtime_env.env_check()}\n{runtime_env.payload_check(payload)}')
 
     event_type = eventTypes(payload.get('alertTypeId'))
     return event_type.event_match(payload) # Event processing
@@ -95,15 +94,11 @@ def webhook_triage(payload: dict):
 ## This is the function in prod called by '/alert/wx'
 def event_handler(payload: dict):
     
-    payload_and_env_check(payload)
-
     if payload.get('alertTypeId') == alertTypeId.MOTION_ALERT.value:
-        print("(log) Motion Alert initiated\n---------------")
-        
-        # define mvMotionAlert process
+        print("(log) event_handler: Motion Alert\n---------------")
         try:
-            get_snap(payload=payload, is_recap=True)
-            return mv_alert_to_wx(payload=payload, is_recap=True)
+            get_snap(payload=payload)
+            return mv_alert_to_wx(payload=payload)
 
         except KeyError as e:
             print(f"(log) mv_alert_to_wx failed: Invalid Key Error!")
@@ -114,7 +109,7 @@ def event_handler(payload: dict):
 
     # Default webhook payload handler for all other events
     else:
-        print("(log) Event handler initiated\n---------------")
+        print("(log) event_handler: default\n---------------")
 
         # Webhook processing
         try:
