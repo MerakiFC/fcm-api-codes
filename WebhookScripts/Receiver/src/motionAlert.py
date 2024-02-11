@@ -12,8 +12,9 @@ class MotionAlertSender:
         self.alert_type : str = payload.get('alertType')
         self.alert_timestamp : str = int(payload.get('alertData').get('timestamp'))
         self.network_name: str = payload.get('networkName')
-        self.video_url: str = ""
-        self.image_url: str = ""
+        self.video_url_dash: str = "None"
+        self.video_url_vis: str = "None"
+        self.image_url: str = "None"
 
 
     def tx_headline(self) -> str:
@@ -32,7 +33,7 @@ class MotionAlertSender:
         md_body: str = (
                     f"\n* Network Name: **{self.network_name}**"
                     f"\n* Snapshot: [image]({self.image_url})"
-                    f"\n* Meraki Vision [video link]({self.video_url})"
+                    f"\n* Video link: [Dashboard]({self.video_url_dash}) | [Vision]({self.video_url_vis})"
                     )
         return md_body
     
@@ -49,9 +50,10 @@ def event_processor(payload: dict):
     
     # Concurrent threading for API calls: get_snap and vid_url
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ep_prep:
+        #Generate snapshot url from Dashboard
         get_snap_thd = ep_prep.submit(get_snap, payload)
         f_image_url = get_snap_thd.result(timeout=3)
-        #Download image file
+        #Download image file from url generated above
         get_img_thd = ep_prep.submit(get_img_file, url=f_image_url, timestamp_epoch=timestamp_epoch)
 
         vid_url_thd = ep_prep.submit(get_mv_video_url, mv_serial=mv_serial, occurred_at_iso=occ_ts)
@@ -61,10 +63,11 @@ def event_processor(payload: dict):
     #Instantiate message content from MotionAlertSender class
     message_content = MotionAlertSender(payload)
     #Assign message content string, add video_url attribute
-    message_content.video_url = str(f_video_url)
+    message_content.video_url_dash = f_video_url.get('url')
+    message_content.video_url_vis = f_video_url.get('visionUrl')
     message_content.image_url = str(f_image_url)
     
     #Forward message content to wxSender.outbox
     md_body = message_content.md_outbound()
 
-    return wxSender.outbox(md_body, timestamp_epoch)
+    return wxSender.outbox_with_img_attach(md_body, timestamp_epoch)

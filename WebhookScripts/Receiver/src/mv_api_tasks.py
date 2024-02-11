@@ -4,7 +4,7 @@ import queue
 
 from src.exceptions import HTTPRequestExceptionError
 from src.handler import RuntimeLoader
-from src.converters import utc_iso_to_tz_offset
+#from src.converters import utc_iso_to_tz_offset
 
 # declare snaps/ sub-directory
 def img_file_path(file_name: str) -> str:
@@ -62,8 +62,8 @@ def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=1) -
 # Generate and save snapshot:input payload, return None
 def get_snap(payload: dict) -> str:
     runtime_env = RuntimeLoader()
-    MERAKI_API_URL: str = str(runtime_env['MERAKI_API_URL'])
-    M_API_KEY: str = str(runtime_env['M_API_KEY'])
+    MERAKI_API_URL: str = str(runtime_env.MERAKI_API_URL)
+    M_API_KEY: str = str(runtime_env.M_API_KEY)
 
     time_occurred_iso: str = payload.get('occurredAt')
     url_gen_snap: str = f"{MERAKI_API_URL}/devices/{payload.get('deviceSerial')}/camera/generateSnapshot"
@@ -93,7 +93,7 @@ def get_snap(payload: dict) -> str:
 
 
 # Get Videolink to alert footage with timestamp in ISO8601 format
-def get_mv_video_url(mv_serial: str, occurred_at_iso: str) -> str:
+def get_mv_video_url(mv_serial: str, occurred_at_iso: str) -> dict:
     runtime_env = RuntimeLoader()
     MERAKI_API_URL: str = str(runtime_env['MERAKI_API_URL'])
     M_API_KEY: str = str(runtime_env['M_API_KEY'])
@@ -110,6 +110,6 @@ def get_mv_video_url(mv_serial: str, occurred_at_iso: str) -> str:
     response = requests.get(url, headers=headers)
     if response and response.status_code == 200:
         print("videoLink create: Success")
-        return response.json().get('visionUrl')
+        return response.json()
 
     raise HTTPRequestExceptionError(f'GET Video URL Error: {url}')

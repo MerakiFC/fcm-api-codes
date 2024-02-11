@@ -93,31 +93,13 @@ def webhook_triage(payload: dict):
 
 ## This is the function in prod called by '/alert/wx'
 def event_handler(payload: dict):
-    
-    if payload.get('alertTypeId') == alertTypeId.MOTION_ALERT.value:
-        print("(log) event_handler: Motion Alert\n---------------")
-        try:
-            get_snap(payload=payload)
-            return mv_alert_to_wx(payload=payload)
-
-        except KeyError as e:
-            print(f"(log) mv_alert_to_wx failed: Invalid Key Error!")
-            raise        
-        except Exception as e:
-            print(f"(log) mv_alert_to_wx failed: Processing error!")
-            return e
-
-    # Default webhook payload handler for all other events
-    else:
-        print("(log) event_handler: default\n---------------")
-
-        # Webhook processing
-        try:
-            return event_to_wx(payload)
-        
-        except KeyError as e:
-            print(f"(log) event_to_wx failed: Invalid Key Error!")
-            raise        
-        except Exception as e:
-            print(f"(log) event_to_wx failed: Processing error!")
-            return e
+    print("(log) event_handler: default\n---------------")
+    # Webhook processing via default handler using event_to_wx
+    try:
+        return event_to_wx(payload)
+    except KeyError as e:
+        print(f"(log) event_to_wx failed: Invalid Key Error!")
+        raise        
+    except Exception as e:
+        print(f"(log) event_to_wx failed: Processing error!")
+        return e
