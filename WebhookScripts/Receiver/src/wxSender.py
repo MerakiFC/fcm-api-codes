@@ -75,3 +75,32 @@ def outbox_with_img_attach(md_body, timestamp_epoch):
     
     except HTTPRequestExceptionError:
         raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))
+    
+def outbox_str_only(md_body):
+    tx_runtime = RuntimeLoader()
+    
+    mp_payload: MultipartEncoder = MultipartEncoder(
+                {
+                    "roomId": tx_runtime.WX_ROOM_ID,
+                    "markdown": md_body
+                })
+    headers: dict = ({
+        'Content-Type': mp_payload.content_type,
+        'Authorization': f'Bearer {tx_runtime.WX_TOKEN}'
+        })
+    
+    try:
+        response = requests.post(tx_runtime.WX_API_URL, 
+                                    headers=headers, data=mp_payload)
+        # Feedback: print response body
+        if response and response.status_code == 200:
+            response_dict: dict = response.json()
+            created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tx_runtime.TZ_OFFSET)
+            print(f"(log) Webex Sender: Message sent {created_at}")
+
+            return response_dict
+
+        raise HTTPRequestExceptionError(f'POST Error: {tx_runtime.WX_API_URL}')
+    
+    except HTTPRequestExceptionError:
+        raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))

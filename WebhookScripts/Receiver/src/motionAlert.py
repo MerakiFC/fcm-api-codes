@@ -1,14 +1,13 @@
-from src.wxtask import mv_alert_to_wx
-from src.mv_api_tasks import get_snap, get_mv_video_url, get_img_file
 from src.handler import RuntimeLoader
 from src.converters import epoch_to_utc_iso, utc_iso_to_tz_offset
-
+from src.mv_api_tasks import get_snap, get_mv_video_url, get_img_file
 import src.wxSender as wxSender
 import concurrent.futures
 
 class MotionAlertSender:
     def __init__(self, payload:dict):
         self.device_name : str = payload.get('deviceName')
+        self.device_model: str = payload.get('deviceModel')
         self.alert_type : str = payload.get('alertType')
         self.alert_timestamp : str = int(payload.get('alertData').get('timestamp'))
         self.network_name: str = payload.get('networkName')
@@ -21,10 +20,10 @@ class MotionAlertSender:
         runtime_env = RuntimeLoader()
         alert_timestamp_iso: str = utc_iso_to_tz_offset(
                             epoch_to_utc_iso(int(self.alert_timestamp)), 
-                            offset=(int(runtime_env['TZ_OFFSET'])))
+                            offset=(int(runtime_env.TZ_OFFSET)))
 
         md_headline: str = (
-            f"## {self.alert_type} : {self.device_name}"
+            f"## {self.alert_type} : {self.device_name} ({self.device_model})"
             f"\n### Alert timestamp: {alert_timestamp_iso}\n --- \n"
         )
         return md_headline
@@ -39,13 +38,17 @@ class MotionAlertSender:
     
     def md_outbound (self) -> str:
         print ( f'---------------\n(log) Outbound markdown\n---------------\n'
-                f'{self.tx_headline()}{self.tx_body()}')
+                f'{self.tx_headline()}{self.tx_body()}'
+                f'---------------\n(log) end of markdown\n---------------\n'
+                )
         return (f'{self.tx_headline()}{self.tx_body()}')
 
 
 def event_processor(payload: dict):
     mv_serial: str = payload.get('deviceSerial')
     occ_ts: str = payload.get('occurredAt')
+    
+    #Epoch timestamp required to reference the snaps directory attachment file
     timestamp_epoch: str = int(payload.get('alertData').get('timestamp'))
     
     # Concurrent threading for API calls: get_snap and vid_url
@@ -70,4 +73,4 @@ def event_processor(payload: dict):
     #Forward message content to wxSender.outbox
     md_body = message_content.md_outbound()
 
-    return wxSender.outbox_with_img_attach(md_body, timestamp_epoch)
+    return wxSender.outbox_with_img_attach(md_body=md_body, timestamp_epoch=timestamp_epoch)
