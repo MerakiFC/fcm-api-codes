@@ -25,7 +25,7 @@ class eventTypes:
     def event_match(self, payload: dict):
         event_dict: dict = {
             "motion_alert": self.motion_alert,
-            "settings_changed": self.settings_changed
+            "sensor_alert": self.sensor_alert
         }
         event_matched = event_dict.get(self.alertType)
         if event_matched and not None:
