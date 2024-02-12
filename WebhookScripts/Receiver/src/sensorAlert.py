@@ -11,7 +11,10 @@ class SensorAlertSender:
         self.network_name: str = payload.get('networkName')
         self.device_model: str = payload.get('deviceModel')
         self.occurred_at: str = payload.get('occurredAt')
+        self.start_alert: bool = payload.get('alertData').get('startedAlerting')
         self.alert_data: dict = payload.get('alertData')
+        
+        #Parse payload: alertData > triggerData > trigger
         self.trigger_list: dict = payload.get('alertData', {}).get('triggerData', [{}][0].get('trigger', {}))
 
     def tx_headline(self) -> str:
@@ -26,7 +29,8 @@ class SensorAlertSender:
     def tx_body(self) -> str:
         md_body: str = (
                     f"\n* Network Name: **{self.network_name}**"
-                    f"\n* Device Name: {self.device_name} ({self.device_model})")
+                    f"\n* Device Name: {self.device_name} ({self.device_model})"
+                    f'\n* Alerting: {self.start_alert}')
         return md_body
     
     def alert_body(self) -> str:
@@ -36,7 +40,11 @@ class SensorAlertSender:
             trigger_ts = utc_iso_to_tz_offset(epoch_to_utc_iso(int(trigger_dict['ts'])), offset=self.TZ_OFFSET)
             trigger_type = trigger_dict['type']
             trigger_s_value = trigger_dict['sensorValue']
-            alert_md += (f'Time: {trigger_ts}\nValue: {trigger_s_value} (Type: {trigger_type})\n\n')
+            
+            if trigger_type == 'temperature':
+                trigger_s_value = str(f'{float(trigger_s_value):.2f}')
+            
+            alert_md += (f'Timestamp: {trigger_ts}\nValue: {trigger_s_value} (Type: {trigger_type})\n\n')
 
         return (alert_md)
 

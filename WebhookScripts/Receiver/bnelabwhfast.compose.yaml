@@ -1,7 +1,7 @@
 version: '3'
 services:
   bnelabwhfast:
-    image: "pandaxs/whfast:v0.6"
+    image: "pandaxs/whfast:latest"
     container_name: bnelab_whfast
     env_file:
       - .env.bnelab

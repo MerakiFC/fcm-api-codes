@@ -13,20 +13,19 @@ class eventTypes:
         print("Motion alert event")
         return src.motionAlert.event_processor(payload)
         
-    def settings_changed(self, payload: dict):
-        print("Settings changed event")
-        print(payload['alertTypeId'])
-        
     def sensor_alert(self, payload: dict):
         import src.sensorAlert
         print("Sensor alert event")
         return src.sensorAlert.event_processor(payload)
     
+    def settings_changed(self, payload: dict):
+        print("Settings changed event")
+        print(payload['alertTypeId'])
+    
     def event_match(self, payload: dict):
         event_dict: dict = {
             "motion_alert": self.motion_alert,
-            "settings_changed": self.settings_changed,
-            "sensor_alert": self.sensor_alert
+            "settings_changed": self.settings_changed
         }
         event_matched = event_dict.get(self.alertType)
         if event_matched and not None:
