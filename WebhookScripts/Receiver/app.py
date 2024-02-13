@@ -41,7 +41,7 @@ async def test_only(request: Request):
 async def alert_to_wx(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
     sent_at_timestamp_iso: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
-    logging.info(f'Event Sent: {sent_at_timestamp_iso}')
+    logging.info(f'Webhook Received - Time Sent: {sent_at_timestamp_iso}')
 
     try:
         return webhook_triage(payload=payload)

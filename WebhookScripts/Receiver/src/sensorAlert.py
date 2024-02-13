@@ -32,8 +32,8 @@ class SensorAlertSender:
     def tx_body(self) -> str:
         md_body: str = (
                     f"\n* Network Name: **{self.network_name}**"
-                    f"\n* Device Name: {self.device_name} ({self.device_model})"
-                    f'\n* Alerting: {self.start_alert}')
+                    f"\n* Device Name: `{self.device_name}`"
+                    f'\n* Alerting: `{self.start_alert}`')
         return md_body
     
     def alert_body(self) -> str:

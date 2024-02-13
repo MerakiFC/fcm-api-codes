@@ -27,7 +27,7 @@ class MotionAlertSender:
 
         md_headline: str = (
             f"## {self.alert_type} : {self.device_name} ({self.device_model})"
-            f"\n### Alert timestamp: {alert_timestamp_iso}\n --- \n"
+            f"\n### Alert timestamp: `{alert_timestamp_iso}`\n --- \n"
         )
         return md_headline
     

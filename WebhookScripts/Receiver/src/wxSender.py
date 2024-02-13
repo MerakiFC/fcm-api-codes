@@ -69,7 +69,7 @@ def outbox_with_img_attach(md_body, timestamp_epoch):
         if response and response.status_code == 200:
             response_dict: dict = response.json()
             created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tx_runtime.TZ_OFFSET)
-            logger.info(f"Webex Sender: Message sent {created_at}")
+            logger.info(f"Webex: Message sent {created_at}")
 
             return response_dict
 

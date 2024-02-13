@@ -90,7 +90,7 @@ def webhook_triage(payload: dict):
     logger.info(f'Webhook Triage')
 
     runtime_env = RuntimeLoader()
-    logger.info(f'{runtime_env.env_check()}\n{runtime_env.payload_check(payload)}')
+    logger.info(f'{runtime_env.env_check()} | {runtime_env.payload_check(payload)}')
 
     event_type = eventTypes(payload.get('alertTypeId'))
     return event_type.event_match(payload) # Event processing
