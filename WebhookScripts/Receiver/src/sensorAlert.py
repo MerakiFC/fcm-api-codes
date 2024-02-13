@@ -1,6 +1,9 @@
 from src.handler import RuntimeLoader
 from src.converters import epoch_to_utc_iso, utc_iso_to_tz_offset
 import src.wxSender as wxSender
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SensorAlertSender:
     def __init__(self, payload:dict):
@@ -44,15 +47,14 @@ class SensorAlertSender:
             if trigger_type == 'temperature':
                 trigger_s_value = str(f'{float(trigger_s_value):.2f}')
             
-            alert_md += (f'Timestamp: {trigger_ts}\nValue: {trigger_s_value} (Type: {trigger_type})\n\n')
+            alert_md += (f'Timestamp: `{trigger_ts}`\nValue: `{trigger_s_value}` [Type: `{trigger_type}`]\n\n')
 
         return (alert_md)
 
     def md_outbound (self) -> str:
-        print ( f'---------------\n(log) Outbound markdown\n---------------\n'
-                f'{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}'
-                f'---------------\n(log) end of markdown\n---------------\n'
-                )
+        logger.info(f'Start: Outbound markdown body')
+        logger.info(f'\n\n{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
+        logger.info(f'End of markdown')
         return (f'{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
     
 def event_processor(payload: dict):

@@ -21,7 +21,7 @@ def process_image_file(file_path: str) -> bytes:
     except Exception as e:
         print("(log) process_image_file read error: ", str(TypeError) + "\n", str(e))
 
-
+'''
 def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     from app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET, MERAKI_DASHBOARD_URL
     
@@ -97,7 +97,7 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     
     except HTTPRequestExceptionError:
         raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))
-
+'''
 
 def event_to_wx(payload: dict):
     from app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET
@@ -135,7 +135,7 @@ def event_to_wx(payload: dict):
 
             if alert_data:
                 for k, v in alert_data.items():
-                    tx_content = f'{tx_content}\n * {str(k)}:  {str(v)} \n'
+                    tx_content = f'{tx_content}\n{str(k)}:  {str(v)} \n'
         
         print(tx_headline,tx_content)
 

@@ -1,8 +1,10 @@
-import os, json
+import os, json, logging
 from src.exceptions import InvalidPayloadExceptionError
-from src.mvtask import get_snap
-from src.wxtask import mv_alert_to_wx, event_to_wx
-from src.payloadEnums import alertTypeId
+from src.wxtask import event_to_wx
+#from src.payloadEnums import alertTypeId
+
+# Create a logger for handler.py
+logger = logging.getLogger(__name__)
 
 class eventTypes:
     def __init__(self, alertType):
@@ -10,22 +12,24 @@ class eventTypes:
     
     def motion_alert(self, payload: dict):
         import src.motionAlert        
-        print("Motion alert event")
+        logger.info(f'Motion alert event')
         return src.motionAlert.event_processor(payload)
         
     def sensor_alert(self, payload: dict):
         import src.sensorAlert
-        print("Sensor alert event")
+        logger.info(f'Sensor alert event')
         return src.sensorAlert.event_processor(payload)
     
     def settings_changed(self, payload: dict):
-        print("Settings changed event")
-        print(payload['alertTypeId'])
+        import src.settingsChanged
+        logger.info(f'Settings changed event')
+        return src.settingsChanged.event_processor(payload)
     
     def event_match(self, payload: dict):
         event_dict: dict = {
             "motion_alert": self.motion_alert,
-            "sensor_alert": self.sensor_alert
+            "sensor_alert": self.sensor_alert,
+            "settings_changed": self.settings_changed
         }
         event_matched = event_dict.get(self.alertType)
         if event_matched and not None:
@@ -51,12 +55,12 @@ class RuntimeLoader():
             envkeys_valid: bool = all(variable is not None for variable in 
                                 (self.MERAKI_API_URL, self.WX_TOKEN, self.M_API_KEY))
             if not envkeys_valid:
-                print(f'Key Error: some environment keys are missing or invalid')
+                logger.error(f'Key Error: some environment keys are missing or invalid')
                 raise KeyError
             return (f'Env keys valid: {envkeys_valid}')
         
         except Exception as e:
-            print(f'env_check failed.\n {e}')
+            logger.error(f'env_check failed.\n {e}')
 
     def key_dict(self):
         return json.dumps(self.__dict__)
@@ -73,19 +77,20 @@ class RuntimeLoader():
             payload_is_valid: bool = all(variable is not None for variable in
                             (self.device_name, self.alert_type, self.occurred_at, self.network_name))
             if not payload_is_valid:
+                logger.error(f'Invalid Payload: Missing Keys')
                 raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Keys')
             return (f"Payload valid: {payload_is_valid}")
         except Exception as e:
-            print(f'payload_check failed.\n {e}')
+            logger.warning(f'payload_check failed.\n {e}')
 
 
 ## This function is under development
 ## Triage the incoming payload based on alert type
 def webhook_triage(payload: dict):
-    print("(log) Webhook Triage\n---------------")
+    logger.info(f'Webhook Triage')
 
     runtime_env = RuntimeLoader()
-    print(f'{runtime_env.env_check()}\n{runtime_env.payload_check(payload)}')
+    logger.info(f'{runtime_env.env_check()}\n{runtime_env.payload_check(payload)}')
 
     event_type = eventTypes(payload.get('alertTypeId'))
     return event_type.event_match(payload) # Event processing
@@ -93,13 +98,13 @@ def webhook_triage(payload: dict):
 
 ## This is the function in prod called by '/alert/wx'
 def event_handler(payload: dict):
-    print("(log) event_handler: default\n---------------")
+    logger.info(f'event_handler default')
     # Webhook processing via default handler using event_to_wx
     try:
         return event_to_wx(payload)
     except KeyError as e:
-        print(f"(log) event_to_wx failed: Invalid Key Error!")
-        raise        
+        logger.error(f"event_to_wx failed: Invalid Key Error!")
+        raise KeyError
     except Exception as e:
-        print(f"(log) event_to_wx failed: Processing error!")
+        logger.warning(f"event_to_wx failed: Processing error!")
         return e

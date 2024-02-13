@@ -1,10 +1,11 @@
-import requests
-import os, sys, json, time
-import queue
+import requests, json
+import os, time, logging
 
 from src.exceptions import HTTPRequestExceptionError
 from src.handler import RuntimeLoader
 #from src.converters import utc_iso_to_tz_offset
+
+logger = logging.getLogger(__name__)
 
 # declare snaps/ sub-directory
 def img_file_path(file_name: str) -> str:
@@ -22,12 +23,12 @@ def check_snap_file(timestamp_epoch: str) -> bool:
         print(f'Found: {file_loc}')
         return True
     
-    print(f'check_snap_file: {str(file_name)} not found. Proceed.')
+    logger.debug(f'check_snap_file: {str(file_name)} not found. Proceed.')
     return False
 
 # Use imageUrl to download image file
-def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=1) -> None:
-    print(f"get_img_file: Downloading and saving snapshot from\n{url}.")
+def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=2) -> None:
+    logger.debug(f"get_img_file: Downloading and saving snapshot from\n{url}.")
 
     file_name: str = f'{timestamp_epoch}.jpg'
     file_loc: str = img_file_path(file_name)
@@ -41,22 +42,22 @@ def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=1) -
                     with open(file_loc, 'wb') as file:
                         for chunk in response.iter_content(chunk_size=8192):
                             file.write(chunk)
-                    print(f"get_img_file: Success! Snapshot saved as {file_name}")
+                    logger.info(f"get_img_file: Success! Snapshot saved as {file_name}")
                     return
                 else:
-                    print(f"Attempt {attempt + 1} failed. (code:{response.status_code})")
+                    logger.warning(f"Attempt {attempt + 1} failed. (code:{response.status_code})")
             except requests.exceptions.RequestException as e:
-                print(f"get_img_file failed: {e}")
+                logger.warning(f"get_img_file failed: {e}")
             
             if attempt < max_retries - 1:
                 print(f"Retrying in {retry_delay}s...")
                 time.sleep(retry_delay)
             else:
-                print(f"get_img_file: Max retries reached.\n"
+                logger.warning(f"get_img_file: Max retries reached.\n"
                     f"Last status code:{response.status_code if response else 'None'}")
                 return
     else:
-        print(f'get_img_file: File exists. Proceed.')
+        logger.info(f'get_img_file: File exists. Proceed.')
         return
 
 # Generate and save snapshot:input payload, return None
@@ -80,15 +81,16 @@ def get_snap(payload: dict) -> str:
         }
     
     # Start Generate snapshot function##
-    print("get_snap: Request generate snapshot...")
+    logger.debug("get_snap: Request generate snapshot...")
     # send get_snap request action
     try:
         response = requests.post(url_gen_snap, headers=tx_headers, data=tx_payload)
         response_dict: dict = response.json()
         url: str = response_dict.get('url')
-        print (f"get_snap Success: snapshot URL generated")
+        logger.info (f"get_snap Success: snapshot URL generated")
         return (url)
     except Exception as e:
+        logger.warning(f"get_snap failed: {e}")
         raise HTTPRequestExceptionError(f"Failed to generate snapshot: {e}")
 
 
@@ -100,7 +102,7 @@ def get_mv_video_url(mv_serial: str, occurred_at_iso: str) -> dict:
 
     url: str = f"{MERAKI_API_URL}/devices/{mv_serial}/camera/videoLink/?timestamp={occurred_at_iso}"
 
-    print("get_mv_video_url: Requesting internal video link...")
+    logger.debug("get_mv_video_url: Requesting internal video link...")
 
     headers: dict = {
         'X-Cisco-Meraki-API-Key': M_API_KEY,
@@ -109,7 +111,8 @@ def get_mv_video_url(mv_serial: str, occurred_at_iso: str) -> dict:
 
     response = requests.get(url, headers=headers)
     if response and response.status_code == 200:
-        print("videoLink create: Success")
+        logger.info("videoLink create: Success")
         return response.json()
 
+    logger.warning(f"get_mv_video_url: Failed to create videoLink. (code: {response.status_code})")
     raise HTTPRequestExceptionError(f'GET Video URL Error: {url}')

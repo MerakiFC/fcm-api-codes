@@ -1,14 +1,17 @@
 from datetime import datetime, timedelta
 import pytz
+import logging
 
 from src.exceptions import ConverterExceptionError
 
+logger = logging.getLogger(__name__)
 
 def epoch_to_aest(epoch_time, timezone='Australia/Brisbane') -> datetime:
     try:
         return datetime.fromtimestamp(epoch_time, pytz.timezone(timezone))
 
     except Exception as e:
+        logger.error(f"Time Conversion Error: {e}")
         raise ConverterExceptionError(f"Time Conversion Error: {e}")
 
 
@@ -22,6 +25,7 @@ def epoch_to_utc_iso(epoch_time: float) -> str:
         return f'{utc_time.isoformat()}Z'
 
     except Exception as e:
+        logger.error(f"Time Conversion Error: {e}")
         raise ConverterExceptionError(f"Time Conversion Error: {e}")
 
 
@@ -35,6 +39,7 @@ def utc_iso_to_epoch(utc_time_iso: str) -> int:
         return int(utc_time.timestamp())
 
     except Exception as e:
+        logger.error(f"Time Conversion Error: {e}")
         raise ConverterExceptionError(f"Time Conversion Error: {e}")
 
 
@@ -58,5 +63,6 @@ def utc_iso_to_tz_offset(iso_utc: str, offset: int) -> str:
         return str(converted_time_iso).replace('+00:00', '(UTC{:+d})'.format(offset))
 
     except Exception as e:
+        logger.error(f"Time Conversion Error: {e}")
         raise ConverterExceptionError(f"Time Conversion Error: {e}")
 

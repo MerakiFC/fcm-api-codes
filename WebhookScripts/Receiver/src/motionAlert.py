@@ -3,6 +3,9 @@ from src.converters import epoch_to_utc_iso, utc_iso_to_tz_offset
 from src.mv_api_tasks import get_snap, get_mv_video_url, get_img_file
 import src.wxSender as wxSender
 import concurrent.futures
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MotionAlertSender:
     def __init__(self, payload:dict):
@@ -37,10 +40,9 @@ class MotionAlertSender:
         return md_body
     
     def md_outbound (self) -> str:
-        print ( f'---------------\n(log) Outbound markdown\n---------------\n'
-                f'{self.tx_headline()}{self.tx_body()}'
-                f'---------------\n(log) end of markdown\n---------------\n'
-                )
+        logger.info(f'Start: Outbound markdown body')
+        logger.info(f'{self.tx_headline()}{self.tx_body()}')
+        logger.info(f'End of markdown')
         return (f'{self.tx_headline()}{self.tx_body()}')
 
 

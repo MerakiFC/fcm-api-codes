@@ -4,7 +4,9 @@ from src.handler import RuntimeLoader
 from src.mv_api_tasks import img_file_path
 from requests_toolbelt import MultipartEncoder
 
-import requests, json
+import requests, json, logging
+
+logger = logging.getLogger(__name__)
 
 class SenderLoader():
     def __init__(self):
@@ -40,7 +42,7 @@ def process_image_file(file_path: str) -> bytes:
             return image.read()
 
     except Exception as e:
-        print("(log) process_image_file read error: ", str(TypeError) + "\n", str(e))
+        logger.error("process_image_file read error: ", str(TypeError) + "\n", str(e))
 
 #This function will perform the Webex POST. Input:? Return: Webex response body
 def outbox_with_img_attach(md_body, timestamp_epoch):
@@ -67,13 +69,15 @@ def outbox_with_img_attach(md_body, timestamp_epoch):
         if response and response.status_code == 200:
             response_dict: dict = response.json()
             created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tx_runtime.TZ_OFFSET)
-            print(f"(log) Webex Sender: Message sent {created_at}")
+            logger.info(f"Webex Sender: Message sent {created_at}")
 
             return response_dict
 
+        logger.error(f'POST Error: {tx_runtime.WX_API_URL}')
         raise HTTPRequestExceptionError(f'POST Error: {tx_runtime.WX_API_URL}')
     
     except HTTPRequestExceptionError:
+        logger.error(f'HTTP Exception: {response.status_code} - {response.get("error")}')
         raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))
     
 def outbox_str_only(md_body):
@@ -96,11 +100,13 @@ def outbox_str_only(md_body):
         if response and response.status_code == 200:
             response_dict: dict = response.json()
             created_at: str = utc_iso_to_tz_offset(iso_utc=(response_dict.get('created')), offset=tx_runtime.TZ_OFFSET)
-            print(f"(log) Webex Sender: Message sent {created_at}")
+            logger.info(f"Webex Sender: Message sent {created_at}")
 
             return response_dict
 
+        logger.error(f'POST Error: {tx_runtime.WX_API_URL}')
         raise HTTPRequestExceptionError(f'POST Error: {tx_runtime.WX_API_URL}')
     
     except HTTPRequestExceptionError:
+        logger.error(f'HTTP Exception: {response.status_code} - {response.get("error")}')
         raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))
