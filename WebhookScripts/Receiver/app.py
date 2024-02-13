@@ -11,7 +11,7 @@ from src.handler import webhook_triage
 use_env_file: bool = load_dotenv()
 
 SERVER_IP: str = "0.0.0.0"
-SERVER_PORT: int = int(os.getenv("SERVER_PORT"))
+APP_PORT: int = int(os.getenv("APP_PORT"))
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, 
@@ -62,7 +62,7 @@ def main() -> None:
     elif use_env_file:
         logging.debug(f"Using .env \nMeraki API: {os.getenv('MERAKI_API_URL')}\nOrgID: {M_ORG_ID}")
 
-    web_service_config = uvicorn.Config("app:app", host=SERVER_IP, port=SERVER_PORT)
+    web_service_config = uvicorn.Config("app:app", host=SERVER_IP, port=APP_PORT)
     web_service = uvicorn.Server(web_service_config)
     web_service.run()
 

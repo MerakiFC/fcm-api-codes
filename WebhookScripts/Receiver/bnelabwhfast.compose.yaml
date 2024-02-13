@@ -6,7 +6,7 @@ services:
     env_file:
       - .env.bnelab
     ports:
-      - 10987:10987
+      - "${HOST_PORT}:${APP_PORT}"
     volumes:
       - snaps-lab:/Receiver/snaps
     networks:

@@ -6,7 +6,7 @@ services:
     env_file:
       - .env.prod
     ports:
-      - 8220:8220
+      - "${HOST_PORT}:${APP_PORT}"
     volumes:
       - snaps-data:/Receiver/snaps
         
