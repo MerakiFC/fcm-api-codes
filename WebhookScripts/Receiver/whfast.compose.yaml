@@ -9,7 +9,6 @@ services:
       - "${HOST_PORT}:${APP_PORT}"
     volumes:
       - snaps-data:/Receiver/snaps
-        
     networks:
       - network1
 

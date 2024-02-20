@@ -5,12 +5,15 @@ from requests_toolbelt import MultipartEncoder
 from src.converters import epoch_to_aest, utc_iso_to_tz_offset
 from src.exceptions import HTTPRequestExceptionError, ConverterExceptionError, \
     InvalidPayloadExceptionError
-from src.mvtask import get_mv_video_url
+from dotenv import load_dotenv
+#from src.mvtask import get_mv_video_url
+load_dotenv()
 
 WX_API_URL: str = os.getenv("WX_API_URL")
 WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
 WX_TOKEN: str = os.getenv("WX_TOKEN")
 MERAKI_DASHBOARD_URL: str = "https://dashboard.meraki.com"
+TZ_OFFSET: int = int(os.getenv("TZ_OFFSET"))
 
 
 def process_image_file(file_path: str) -> bytes:
@@ -100,14 +103,6 @@ def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
 '''
 
 def event_to_wx(payload: dict):
-    from app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET
-    
-    # Check environment keys are present and not None
-    envkeys_valid: bool = all(variable is not None for variable in 
-                                (WX_API_URL, WX_ROOM_ID, WX_TOKEN))
-    if not envkeys_valid:
-        print(f'Key Error: some WX environment keys are missing or invalid')
-        raise KeyError
 
     try:
         device_name: str = payload.get('deviceName')
@@ -130,12 +125,12 @@ def event_to_wx(payload: dict):
 
         #  Check for presence of alertData object and check if the object is not empty
         if payload.get('alertData'):
-            tx_content = f'{tx_content}\n### Alert Data:\n'
+            tx_content = f'{tx_content}\n### Alert Data Content\n'
             alert_data: dict = payload.get('alertData')
 
             if alert_data:
                 for k, v in alert_data.items():
-                    tx_content = f'{tx_content}\n{str(k)}:  {str(v)} \n'
+                    tx_content = f'{tx_content}\n{str(k)}:  `{str(v)}` \n'
         
         print(tx_headline,tx_content)
 

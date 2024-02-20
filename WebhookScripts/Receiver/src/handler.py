@@ -32,7 +32,7 @@ class eventTypes:
             "settings_changed": self.settings_changed
         }
         event_matched = event_dict.get(self.alertType)
-        if event_matched and not None:
+        if event_matched:
             return event_matched(payload=payload)
         else:
             return event_handler(payload)
