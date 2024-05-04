@@ -18,7 +18,7 @@ class SenderLoader():
         self.md_body: str = "None"
         self.file_name: str = "None"
         self.attached_image: bytes = None
-        self.content_type = "MultipartEncoder.content_type"
+        #self.content_type = "MultipartEncoder.content_type"
 
     def tx_header(self) -> dict:
         headers: dict = ({

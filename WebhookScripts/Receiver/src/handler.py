@@ -7,8 +7,13 @@ from src.wxtask import event_to_wx
 logger = logging.getLogger(__name__)
 
 class eventTypes:
-    def __init__(self, alertType):
+    def __init__(self, alertType: str):
         self.alertType = alertType
+        self.event_dict = {
+            "motion_alert": self.motion_alert,
+            "sensor_alert": self.sensor_alert,
+            "settings_changed": self.settings_changed
+        }
     
     def motion_alert(self, payload: dict):
         import src.motionAlert        
@@ -26,12 +31,7 @@ class eventTypes:
         return src.settingsChanged.event_processor(payload)
     
     def event_match(self, payload: dict):
-        event_dict: dict = {
-            "motion_alert": self.motion_alert,
-            "sensor_alert": self.sensor_alert,
-            "settings_changed": self.settings_changed
-        }
-        event_matched = event_dict.get(self.alertType)
+        event_matched = self.event_dict.get(self.alertType)
         if event_matched:
             return event_matched(payload=payload)
         else:

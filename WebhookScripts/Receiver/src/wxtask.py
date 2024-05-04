@@ -125,7 +125,7 @@ def event_to_wx(payload: dict):
 
         #  Check for presence of alertData object and check if the object is not empty
         if payload.get('alertData'):
-            tx_content = f'{tx_content}\n### Alert Data Content\n'
+            tx_content = f'{tx_content}\n### Alert Data Body\n'
             alert_data: dict = payload.get('alertData')
 
             if alert_data:

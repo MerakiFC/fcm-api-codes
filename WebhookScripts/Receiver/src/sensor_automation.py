@@ -21,12 +21,6 @@ class ButtonAutomation:
         self.alert_data: dict = payload.get('alertData')
         self.automation_msg: str = self.alert_data.get('message')
 
-    def mt30_event_match(self, automation_msg: str):
-        event_dict: dict = {
-            "duress_short": self.duress_short
-        }
-        pass
-
     def get_device_status(self, orgId: str, deviceSerial: str) -> dict:
         url = (f"https://api.meraki.com/api/v1/organizations/{orgId}/devices/statuses?serials[]={deviceSerial}")
 
@@ -40,4 +34,17 @@ class ButtonAutomation:
         dict_response = response.json()[0]
 
         return(dict_response)
+
+##In development 21/02/2024
+    def mt30_event_match(self, automation_msg: str):
+        event_dict: dict = {
+            "duress_short": self.duress_short
+        }
+        event_matched = event_dict.get(self.automation_msg)
+        if event_matched:
+            return (event_matched)
+        else:
+            return ("Event Message not found")
+
+
 
