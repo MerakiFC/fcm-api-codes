@@ -59,7 +59,7 @@ class SensorAlertSender:
             trigger_s_value = trigger_dict['sensorValue']
             trigger_value_dict = {
                 "temperature": str(f'{float(trigger_s_value):.2f}'),
-                "humidity": str(f'{float(trigger_s_value)}%'),
+                "humidity": str(f'{int(trigger_s_value)} %'),
                 "door": "Open" if trigger_s_value == 1.0 else "Closed"
             }
             #print (f'Normalized value: {trigger_value_dict[trigger_type]}')
