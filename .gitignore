@@ -3,6 +3,7 @@
 *code-workspace*
 *test*
 legacy*
+.DS_Store
 WebhookScripts/Guides/
 WebhookScripts/Payload/
 WebhookScripts/*.json
