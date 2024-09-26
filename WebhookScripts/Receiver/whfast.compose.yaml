@@ -1,8 +1,8 @@
-version: '3'
 services:
   whfast:
-    image: "pandaxs/whfast:v0.8"
+    image: "pandaxs/whfast:v0.9"
     container_name: whfast
+    restart: unless-stopped
     env_file:
       - .env.prod
     ports:
@@ -15,6 +15,7 @@ services:
   hkdk-wx:
     image: "hookdeck/hookdeck-cli"
     container_name: hkdk-wx
+    restart: unless-stopped
     environment:
       - TZ=Australia/Brisbane
     entrypoint: ["/bin/sh","-c"]
@@ -24,7 +25,7 @@ services:
        [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
        /bin/hookdeck listen http://whfast:8220 alerttowx
     volumes:
-      - $HOME/.config/hookdeck/fcm:/root/.config/hookdeck  # persist hookdeck config from local config directory
+      - $HOME/.config/hookdeck/whfast:/root/.config/hookdeck  # persist hookdeck config from local config directory
     networks:
       - network1
 

@@ -1,8 +1,8 @@
-version: '3'
 services:
   bnelabwhfast:
-    image: "pandaxs/whfast:v0.7"
+    image: "pandaxs/whfast:v0.9"
     container_name: bnelab_whfast
+    restart: unless-stopped
     env_file:
       - .env.bnelab
     ports:
@@ -15,16 +15,17 @@ services:
   bnelab-hkdk-wx:
     image: "hookdeck/hookdeck-cli"
     container_name: bnelab_hkdk-wx
+    restart: unless-stopped
     environment:
       - TZ=Australia/Brisbane
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
        /bin/hookdeck version
-       [ -f $HOME/.config/hookdeck/config-lab.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
+       [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
        /bin/hookdeck listen http://bnelab_whfast:10987 bnelab-webhooks
     volumes:
-      - $HOME/.config/hookdeck/bnelab:/root/.config/hookdeck  # persist hookdeck config from local config directory
+      - $HOME/.config/hookdeck/bnefast:/root/.config/hookdeck  # persist hookdeck config from local config directory
     networks:
       - network1
 

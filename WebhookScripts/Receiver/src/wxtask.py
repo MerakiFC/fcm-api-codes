@@ -24,6 +24,7 @@ def process_image_file(file_path: str) -> bytes:
     except Exception as e:
         print("(log) process_image_file read error: ", str(TypeError) + "\n", str(e))
 
+## As of 2024-07-29: For deprecation as motion alert event is now handled by motionAlert.py module
 '''
 def mv_alert_to_wx(payload: dict, is_recap: bool = False) -> dict:
     from app import WX_TOKEN, WX_ROOM_ID, WX_API_URL, TZ_OFFSET, MERAKI_DASHBOARD_URL

@@ -12,7 +12,8 @@ class eventTypes:
         self.event_dict = {
             "motion_alert": self.motion_alert,
             "sensor_alert": self.sensor_alert,
-            "settings_changed": self.settings_changed
+            "settings_changed": self.settings_changed,
+            "sensor_automation": self.sensor_automation
         }
     
     def motion_alert(self, payload: dict):
@@ -30,12 +31,19 @@ class eventTypes:
         logger.info(f'Settings changed event')
         return src.settingsChanged.event_processor(payload)
     
+    ## Under development as of 2024-07-29: to handle MT30 automation
+    def sensor_automation(self, payload: dict):
+        import src.sensorAutomation
+        logger.info(f'Sensor automation event')
+        print(f'{payload.get('deviceName')} automation event')
+        #return src.settingsChanged.event_processor(payload)
+
     def event_match(self, payload: dict):
         event_matched = self.event_dict.get(self.alertType)
         if event_matched:
             return event_matched(payload=payload)
         else:
-            return event_handler(payload)
+            return event_handler(payload) #user event_handler as default catch-all
 
 class RuntimeLoader():
     def __init__(self):
@@ -84,7 +92,6 @@ class RuntimeLoader():
             logger.warning(f'payload_check failed.\n {e}')
 
 
-## This function is under development
 ## Triage the incoming payload based on alert type
 def webhook_triage(payload: dict):
     logger.info(f'Webhook Triage')
@@ -96,7 +103,7 @@ def webhook_triage(payload: dict):
     return event_type.event_match(payload) # Event processing
 
 
-## This is the function in prod called by '/alert/wx'
+## Function as catch-all if undefined in webhook_triage event
 def event_handler(payload: dict):
     logger.info(f'event_handler default')
     # Webhook processing via default handler using event_to_wx
