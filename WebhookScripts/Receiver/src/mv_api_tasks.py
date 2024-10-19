@@ -27,7 +27,7 @@ def check_snap_file(timestamp_epoch: str) -> bool:
     return False
 
 # Use imageUrl to download image file
-def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=2) -> None:
+def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=3) -> None:
     logger.debug(f"get_img_file: Downloading and saving snapshot from\n{url}.")
 
     file_name: str = f'{timestamp_epoch}.jpg'
@@ -50,6 +50,7 @@ def get_img_file(url: str, timestamp_epoch: str, max_retries=5, retry_delay=2) -
                 logger.warning(f"get_img_file failed: {e}")
             
             if attempt < max_retries - 1:
+                retry_delay = retry_delay + attempt
                 print(f"Retrying in {retry_delay}s...")
                 time.sleep(retry_delay)
             else:

@@ -11,3 +11,4 @@ WebhookScripts/*.json
 WebhookScripts/Receiver/snaps/
 wh_rcvr/
 fastapi/
+*vFastTest/

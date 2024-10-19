@@ -16,7 +16,8 @@ class SensorAlertSender:
         self.occurred_at: str = payload.get('occurredAt')
         self.start_alert: bool = payload.get('alertData').get('startedAlerting')
         self.alert_data: dict = payload.get('alertData')
-        
+        self.alert_config_name: str = payload.get('alertData').get('alertConfigName')
+
         #Parse payload: alertData > triggerData > trigger
         self.trigger_list: dict = payload.get('alertData', {}).get('triggerData', [{}][0].get('trigger', {}))
 
@@ -25,7 +26,8 @@ class SensorAlertSender:
 
         md_headline: str = (
             f'### {self.alert_type} on: `{self.device_name} ({self.device_model})`\n'
-            f'### Alert timestamp: `{alert_timestamp_iso}`\n --- \n'
+            f'* Alert timestamp: `{alert_timestamp_iso}`\n'
+            f'* Alert Profile: `{self.alert_config_name}`\n --- \n'
         )
         if self.start_alert:
             md_headline = (f'### -- Sensor Alerting --\n{self.alert_normalize()}\n --- \n\n{md_headline}')
@@ -47,7 +49,7 @@ class SensorAlertSender:
             trigger_type = trigger_dict['type']
             trigger_s_value = trigger_dict['sensorValue']
 
-            alert_md += (f'Timestamp: `{trigger_ts}`\nReal Value: `{trigger_s_value}` (Type: `{trigger_type}`)\n\n')
+            alert_md += (f'* Timestamp: `{trigger_ts}`\n* Real Value: `{trigger_s_value}` (Type: `{trigger_type}`)\n\n')
 
         return (alert_md)
 
@@ -76,7 +78,12 @@ class SensorAlertSender:
         logger.info(f'Start: Outbound markdown body')
         logger.info(f'\n\n{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
         logger.info(f'End of markdown')
-        return (f'{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
+
+        md_body: str = (f'{self.tx_headline()}')
+        if not self.start_alert:
+            md_body: str = (f'{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
+
+        return (md_body)
     
 def event_processor(payload: dict):
     #Instantiate message content from SensorAlertSender class
