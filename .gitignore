@@ -12,3 +12,4 @@ WebhookScripts/Receiver/snaps/
 wh_rcvr/
 fastapi/
 *vFastTest/
+*dev*
