@@ -7,29 +7,55 @@ from src.wxtask import event_to_wx
 logger = logging.getLogger(__name__)
 
 class eventTypes:
+    # Define event types and event dictionary for event matching
     def __init__(self, alertType: str):
         self.alertType = alertType
-        self.event_dict = {
-            "motion_alert": self.motion_alert,
-            "sensor_alert": self.sensor_alert,
-            "settings_changed": self.settings_changed,
-            "sensor_automation": self.sensor_automation
-        }
-    
+        match self.alertType:
+            case "motion_alert":
+                logger.info(f'Event Type: motion_alert')
+                self.event_dict = {
+                    "motion_alert": self.motion_alert
+                }
+            case "sensor_alert":
+                logger.info(f'Event Type: sensor_alert')
+                self.event_dict = {
+                    "sensor_alert": self.sensor_alert
+                }
+            case "settings_changed":
+                logger.info(f'Event Type: settings_changed')
+                self.event_dict = {
+                    "settings_changed": self.settings_changed
+                }
+            case "mi_alert":
+                logger.info(f'Event Type: mi_alert')
+                self.event_dict = {
+                    "mi_alert": self.mi_alert
+                }
+            case "sensor_automation":
+                logger.info(f'Event Type: sensor_automation')
+                self.event_dict = {
+                    "sensor_automation": self.sensor_automation
+                }
+### Event matching and forwarding to event processor for each alert type
     def motion_alert(self, payload: dict):
         import src.motionAlert        
-        logger.info(f'Motion alert event')
+        logger.info(f'Motion alert event trigger...')
         return src.motionAlert.event_processor(payload)
         
     def sensor_alert(self, payload: dict):
         import src.sensorAlert
-        logger.info(f'Sensor alert event')
+        logger.info(f'Sensor alert event trigger...')
         return src.sensorAlert.event_processor(payload)
     
     def settings_changed(self, payload: dict):
         import src.settingsChanged
         logger.info(f'Settings changed event')
         return src.settingsChanged.event_processor(payload)
+    
+    def mi_alert(self, payload: dict):
+        import src.miAlert
+        logger.info(f'MI alert event trigger...')
+        return src.miAlert.event_processor(payload)
     
     ## Under development as of 2024-07-29: to handle MT30 automation
     def sensor_automation(self, payload: dict):
@@ -54,6 +80,7 @@ class RuntimeLoader():
         self.WX_API_URL: str = os.getenv("WX_API_URL")
         self.WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
         self.WX_TOKEN: str = os.getenv("WX_TOKEN")
+        self.WH_SHAREDSECRET: str = os.getenv("M_WEBHOOK_SHARED_SECRET")
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -61,7 +88,7 @@ class RuntimeLoader():
     def env_check(self):
         try:
             envkeys_valid: bool = all(variable is not None for variable in 
-                                (self.MERAKI_API_URL, self.WX_TOKEN, self.M_API_KEY))
+                                (self.MERAKI_API_URL, self.WX_TOKEN, self.M_API_KEY, self.WH_SHAREDSECRET))
             if not envkeys_valid:
                 logger.error(f'Key Error: some environment keys are missing or invalid')
                 raise KeyError
@@ -85,11 +112,11 @@ class RuntimeLoader():
             payload_is_valid: bool = all(variable is not None for variable in
                             (self.device_name, self.alert_type, self.occurred_at, self.network_name))
             if not payload_is_valid:
-                logger.error(f'Invalid Payload: Missing Keys')
-                raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Keys')
+                logger.error(f'Invalid Payload: Missing Payload Keys')
+                raise InvalidPayloadExceptionError('Error: Invalid Payload - Missing Payload Keys')
             return (f"Payload valid: {payload_is_valid}")
         except Exception as e:
-            logger.warning(f'payload_check failed.\n {e}')
+            logger.error(f'payload_check failed.\n {e}')
 
 
 ## Triage the incoming payload based on alert type

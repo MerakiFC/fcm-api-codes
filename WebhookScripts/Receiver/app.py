@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import PlainTextResponse
 import uvicorn
 import os, logging
+import hmac
 
 from dotenv import load_dotenv
 
@@ -24,6 +25,7 @@ app: FastAPI = FastAPI(title="WebHookScripts API", openapi_url="/openapi.json")
 TZ_OFFSET: int = int(os.getenv("TZ_OFFSET"))
 MERAKI_API_URL: str = os.getenv("MERAKI_API_URL")
 M_ORG_ID: str = os.getenv("M_ORG_ID")
+M_WEBHOOK_SHARED_SECRET: str = os.getenv("M_WEBHOOK_SHARED_SECRET")
 
 
 @app.get("/", description="Greetings", response_class=PlainTextResponse, status_code=200)
@@ -40,6 +42,18 @@ async def test_only(request: Request):
             description='Meraki Webhook: Event handler notification sent via Webex')
 async def alert_to_wx(request: Request):
     payload = await request.json()  # Get the JSON payload from the request
+    expected_shared_secret: str = M_WEBHOOK_SHARED_SECRET
+    payload_shared_secret: str = str(payload.get("sharedSecret"))
+    #print(expected_shared_secret, payload_shared_secret)
+
+    if not expected_shared_secret:
+        logging.error('Webhook shared secret is not configured in environment')
+        raise HTTPException(status_code=500, detail='Webhook shared secret is not configured')
+
+    if payload_shared_secret != expected_shared_secret:
+        logging.warning('Webhook rejected: invalid sharedSecret')
+        raise HTTPException(status_code=401, detail='Unauthorized: Invalid Key')
+
     sent_at_timestamp_iso: str = utc_iso_to_tz_offset(payload.get("sentAt"), TZ_OFFSET)
     logging.info(f'Webhook Received - Time Sent: {sent_at_timestamp_iso}')
 
