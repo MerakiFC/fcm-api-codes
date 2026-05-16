@@ -1,6 +1,6 @@
 services:
   whfast:
-    image: "pandaxs/whfast:v0.9"
+    image: "pandaxs/whfast:v0.26.1"
     container_name: whfast
     restart: unless-stopped
     env_file:
