@@ -31,13 +31,13 @@ class miAlertSender:
             print(f"{self.alert_data.get('condition').get('type')}")
             lossRatio: str = self.alert_data.get('condition').get('lossRatio')
             md_body: str = (
-                        f'\n* `{self.alert_data.get('condition').get('interface')}` Packet Loss: `{lossRatio:.0%}` for `{self.alert_data.get('condition').get('duration')}` seconds\n'
+                        f'\n* `{self.alert_data.get("condition").get("interface")}` Packet Loss: `{lossRatio:.0%}` for `{self.alert_data.get("condition").get("duration")}` seconds\n'
                         f'\n* Device Offline: `{self.alert_data.get("loggingInfo").get("isOffline")}`'
             )
         else:
             md_body: str = (
-                        f'\n* Alerting: `{self.alert_data.get('configType')}`\n'
-                        f'\n* Condition: `{self.alert_data.get('condition').get('type')}`\n'
+                        f'\n* Alerting: `{self.alert_data.get("configType")}`\n'
+                        f'\n* Condition: `{self.alert_data.get("condition").get("type")}`\n'
             )
         return md_body
 
