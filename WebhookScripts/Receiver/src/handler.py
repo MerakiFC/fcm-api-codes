@@ -36,6 +36,13 @@ class eventTypes:
                 self.event_dict = {
                     "sensor_automation": self.sensor_automation
                 }
+            case _:
+                logger.info(f'Event Type: {self.alertType} undefined, using default event handler')
+                self.event_dict = {
+                    "default": self.alertType
+                }
+
+
 ### Event matching and forwarding to event processor for each alert type
     def motion_alert(self, payload: dict):
         import src.motionAlert        
@@ -65,6 +72,8 @@ class eventTypes:
         #return src.settingsChanged.event_processor(payload)
 
     def event_match(self, payload: dict):
+        # Match the alertType to the event_dict and trigger the event processing function.
+        # If no match is found, use the default event_handler function as a catch-all.
         event_matched = self.event_dict.get(self.alertType)
         if event_matched:
             return event_matched(payload=payload)
@@ -81,7 +90,6 @@ class RuntimeLoader():
         self.WX_ROOM_ID: str = str(os.getenv("WX_ROOM_ID"))
         self.WX_TOKEN: str = os.getenv("WX_TOKEN")
         self.WH_SHAREDSECRET: str = os.getenv("M_WEBHOOK_SHARED_SECRET")
-
     def __getitem__(self, item):
         return getattr(self, item)
 
