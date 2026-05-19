@@ -68,8 +68,8 @@ class eventTypes:
     def sensor_automation(self, payload: dict):
         import src.sensorAutomation
         logger.info(f'Sensor automation event')
-        #print(f'{payload.get('deviceName')} automation event')
-        #return src.settingsChanged.event_processor(payload)
+        print(f'{payload.get('deviceName')} automation event')
+        return src.sensorAutomation.event_processor(payload)
 
     def event_match(self, payload: dict):
         # Match the alertType to the event_dict and trigger the event processing function.

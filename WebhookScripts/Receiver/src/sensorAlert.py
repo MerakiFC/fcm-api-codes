@@ -23,35 +23,37 @@ class SensorAlertSender:
 
     def tx_headline(self) -> str:
         alert_timestamp_iso: str = utc_iso_to_tz_offset(self.occurred_at, offset=self.TZ_OFFSET)
-
+        
         md_headline: str = (
             f'### {self.alert_type} on: `{self.device_name} ({self.device_model})`\n'
             f'* Alert timestamp: `{alert_timestamp_iso}`\n'
-            f'* Alert Profile: `{self.alert_config_name}`\n --- \n'
+            f'* Alert Profile: `{self.alert_config_name}`\n'
         )
+
         if self.start_alert:
             md_headline = (f'### -- Sensor Alerting --\n{self.alert_normalize()}\n --- \n\n{md_headline}')
+        else:
+            md_headline = (f'-- Alerting Cleared --\n\n{self.alert_normalize()}\n --- \n\n{md_headline}')
         
         return md_headline
     
-    def tx_body(self) -> str:
-        md_body: str = (
-                    f'\n* Network Name: `{self.network_name}`'
-                    f'\n* Device Name: `{self.device_name}`'
-                    f'\n* Alert State: `{self.start_alert}`')
-        return md_body
-    
-    def alert_body(self) -> str:
-        alert_md: str = (f' --- \n### Alert Body Details:\n\n')
-        for item in self.trigger_list:
-            trigger_dict = item['trigger']
-            trigger_ts = utc_iso_to_tz_offset(epoch_to_utc_iso(int(trigger_dict['ts'])), offset=self.TZ_OFFSET)
-            trigger_type = trigger_dict['type']
-            trigger_s_value = trigger_dict['sensorValue']
-
-            alert_md += (f'* Timestamp: `{trigger_ts}`\n* Real Value: `{trigger_s_value}` (Type: `{trigger_type}`)\n\n')
-
-        return (alert_md)
+    #def tx_body(self) -> str:
+    #    md_body: str = (
+    #                f'\n* Network Name: `{self.network_name}`'
+    #                f'\n* Device Name: `{self.device_name}`'
+    #                f'\n* Alert State: `{self.start_alert}`')
+    #    return md_body
+    #
+    #def alert_body(self) -> str:
+    #    alert_md: str = (f' --- \n### Alert Body Details:\n\n')
+    #    for item in self.trigger_list:
+    #        trigger_dict = item['trigger']
+    #        trigger_ts = utc_iso_to_tz_offset(epoch_to_utc_iso(int(trigger_dict['ts'])), offset=self.TZ_OFFSET)
+    #        trigger_type = trigger_dict['type']
+    #        trigger_s_value = trigger_dict['sensorValue']
+    #
+    #        alert_md += (f'* Timestamp: `{trigger_ts}`\n* Read: `{trigger_s_value}` (Type: `{trigger_type}`)\n\n')
+    #    return (alert_md)
 
     def alert_normalize(self) -> str:
         normalized_str: str = ''
@@ -59,6 +61,8 @@ class SensorAlertSender:
             trigger_dict = item['trigger']
             trigger_type = trigger_dict['type']
             trigger_s_value = trigger_dict['sensorValue']
+            
+            #Normalize sensor values for temperature, humidity, and door status for better readability in outbound message.
             trigger_value_dict = {
                 "temperature": str(f'{float(trigger_s_value):.2f}'),
                 "humidity": str(f'{int(trigger_s_value)} %'),
@@ -76,12 +80,10 @@ class SensorAlertSender:
 
     def md_outbound (self) -> str:
         logger.info(f'Start: Outbound markdown body')
-        logger.info(f'\n\n{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
+        logger.info(f'\n\n{self.tx_headline()}')
         logger.info(f'End of markdown')
 
         md_body: str = (f'{self.tx_headline()}')
-        if not self.start_alert:
-            md_body: str = (f'{self.tx_headline()}{self.tx_body()}\n{self.alert_body()}')
 
         return (md_body)
     
