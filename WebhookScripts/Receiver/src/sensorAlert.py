@@ -25,7 +25,7 @@ class SensorAlertSender:
         alert_timestamp_iso: str = utc_iso_to_tz_offset(self.occurred_at, offset=self.TZ_OFFSET)
         
         md_headline: str = (
-            f'### {self.alert_type} on: `{self.device_name} ({self.device_model})`\n'
+            f'### {self.alert_type}: `{self.device_name} ({self.device_model})`\n'
             f'* Alert timestamp: `{alert_timestamp_iso}`\n'
             f'* Alert Profile: `{self.alert_config_name}`\n'
         )
