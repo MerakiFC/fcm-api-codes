@@ -13,7 +13,7 @@ services:
       - network1
 
   hkdk-wx:
-    image: "hookdeck/hookdeck-cli"
+    image: "hookdeck/hookdeck-cli:v2.1.1"
     container_name: hkdk-wx
     restart: unless-stopped
     environment:

@@ -2,9 +2,9 @@ import pytest
 from datetime import datetime
 
 
-from WebhookScripts.Receiver.src.converters import epoch_to_aest, epoch_to_utc_iso, utc_iso_to_epoch, \
+from src.converters import epoch_to_aest, epoch_to_utc_iso, utc_iso_to_epoch, \
     utc_iso_to_tz_offset
-from WebhookScripts.Receiver.src.exceptions import ConverterExceptionError
+from src.exceptions import ConverterExceptionError
 
 
 def test_epoch_to_aest_with_valid_epoch_time_london_returns_datetime() -> None:

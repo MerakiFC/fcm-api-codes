@@ -3,10 +3,9 @@ from unittest.mock import Mock
 import pytest
 import requests
 
-from WebhookScripts.Receiver.app import WX_API_URL
-from WebhookScripts.Receiver.src.exceptions import HTTPRequestExceptionError, ConverterExceptionError, \
+from src.wxtask import WX_API_URL, event_to_wx
+from src.exceptions import HTTPRequestExceptionError, ConverterExceptionError, \
     InvalidPayloadExceptionError
-from WebhookScripts.Receiver.src.wxtask import event_to_wx, mv_alert_to_wx
 
 valid_payload: dict = {
   "version": "0.1",
