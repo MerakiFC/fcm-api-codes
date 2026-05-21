@@ -1,84 +1,21 @@
-import os, json, logging
+import os
+import json
+import logging
+import importlib
 from src.exceptions import InvalidPayloadExceptionError
 from src.wxtask import event_to_wx
-#from src.payloadEnums import alertTypeId
 
-# Create a logger for handler.py
 logger = logging.getLogger(__name__)
 
-class eventTypes:
-    # Define event types and event dictionary for event matching
-    def __init__(self, alertType: str):
-        self.alertType = alertType
-        match self.alertType:
-            case "motion_alert":
-                logger.info(f'Event Type: motion_alert')
-                self.event_dict = {
-                    "motion_alert": self.motion_alert
-                }
-            case "sensor_alert":
-                logger.info(f'Event Type: sensor_alert')
-                self.event_dict = {
-                    "sensor_alert": self.sensor_alert
-                }
-            case "settings_changed":
-                logger.info(f'Event Type: settings_changed')
-                self.event_dict = {
-                    "settings_changed": self.settings_changed
-                }
-            case "mi_alert":
-                logger.info(f'Event Type: mi_alert')
-                self.event_dict = {
-                    "mi_alert": self.mi_alert
-                }
-            case "sensor_automation":
-                logger.info(f'Event Type: sensor_automation')
-                self.event_dict = {
-                    "sensor_automation": self.sensor_automation
-                }
-            case _:
-                logger.info(f'Event Type: {self.alertType} undefined, using default event handler')
-                self.event_dict = {
-                    "default": self.alertType
-                }
+# --- Event routing map ---
+EVENT_MAP = {
+    "motion_alert":      "src.motionAlert",
+    "sensor_alert":      "src.sensorAlert",
+    "settings_changed":  "src.settingsChanged",
+    "mi_alert":          "src.miAlert",
+    "sensor_automation": "src.sensorAutomation",
+}
 
-
-### Event matching and forwarding to event processor for each alert type
-    def motion_alert(self, payload: dict):
-        import src.motionAlert        
-        logger.info(f'Motion alert event trigger...')
-        return src.motionAlert.event_processor(payload)
-        
-    def sensor_alert(self, payload: dict):
-        import src.sensorAlert
-        logger.info(f'Sensor alert event trigger...')
-        return src.sensorAlert.event_processor(payload)
-    
-    def settings_changed(self, payload: dict):
-        import src.settingsChanged
-        logger.info(f'Settings changed event')
-        return src.settingsChanged.event_processor(payload)
-    
-    def mi_alert(self, payload: dict):
-        import src.miAlert
-        logger.info(f'MI alert event trigger...')
-        return src.miAlert.event_processor(payload)
-    
-    ## Under development as of 2024-07-29: to handle MT30 automation
-    def sensor_automation(self, payload: dict):
-        import src.sensorAutomation
-        logger.info(f'Sensor automation event')
-        print(f'{payload.get("deviceName")} automation event')
-        return src.sensorAutomation.event_processor(payload)
-
-    def event_match(self, payload: dict):
-        # Match the alertType to the event_dict and trigger the event processing function.
-        # If no match is found, use the default event_handler function as a catch-all.
-        event_matched = self.event_dict.get(self.alertType)
-        if event_matched:
-            return event_matched(payload=payload)
-        else:
-            return event_handler(payload) #user event_handler as default catch-all
 
 class RuntimeLoader():
     def __init__(self):
@@ -104,9 +41,9 @@ class RuntimeLoader():
         
         except Exception as e:
             logger.error(f'env_check failed.\n {e}')
-
-    def key_dict(self):
-        return json.dumps(self.__dict__)
+    # Planned deprecation - for debugging only (2026-05-21)
+    #def key_dict(self):
+    #    return json.dumps(self.__dict__)
 
     ## Payload validation check
     def payload_check(self, payload: dict):
@@ -127,26 +64,40 @@ class RuntimeLoader():
             logger.error(f'payload_check failed.\n {e}')
 
 
-## Triage the incoming payload based on alert type
-def webhook_triage(payload: dict):
-    logger.info(f'Webhook Triage')
-
-    runtime_env = RuntimeLoader()
-    logger.info(f'{runtime_env.env_check()} | {runtime_env.payload_check(payload)}')
-
-    event_type = eventTypes(payload.get('alertTypeId'))
-    return event_type.event_match(payload) # Event processing
-
-
-## Function as catch-all if undefined in webhook_triage event
-def event_handler(payload: dict):
-    logger.info(f'event_handler default')
-    # Webhook processing via default handler using event_to_wx
+# --- Default fallback handler ---
+def default_event_handler(payload: dict):
+    logger.info(f'Using default event handler for: {payload.get("alertTypeId")}')
     try:
         return event_to_wx(payload)
-    except KeyError as e:
-        logger.error(f"event_to_wx failed: Invalid Key Error!")
-        raise KeyError
+    except KeyError:
+        logger.error("event_to_wx failed: Invalid Key Error!")
+        raise
     except Exception as e:
-        logger.warning(f"event_to_wx failed: Processing error!")
+        logger.warning(f"event_to_wx failed: Processing error! {e}")
         return e
+
+# --- Pure routing/dispatching ---
+def dispatch_event(payload: dict):
+    alert_type = payload.get("alertTypeId")
+    module_name = EVENT_MAP.get(alert_type)
+
+    if not module_name:
+        logger.info(f"Event Type '{alert_type}' undefined, using default handler")
+        return default_event_handler(payload)
+
+    try:
+        logger.info(f"{alert_type} event trigger...")
+        module = importlib.import_module(module_name)
+        return module.event_processor(payload)
+    except Exception as e:
+        logger.error(f"Failed to process event '{alert_type}': {e}")
+        return default_event_handler(payload)
+
+# --- Entry point: validation + dispatch ---
+def webhook_triage(payload: dict):
+    logger.info("Webhook Triage")
+
+    runtime_env = RuntimeLoader()
+    logger.info(f"{runtime_env.env_check()} | {runtime_env.payload_check(payload)}")
+
+    return dispatch_event(payload)
