@@ -7,7 +7,7 @@ import json
 import logging
 from src.wxSender import outbox_str_only
 from src.converters import utc_iso_to_tz_offset
-from src.handler import RuntimeLoader
+from src.handler import get_runtime_env
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +113,7 @@ def build_markdown(payload: dict) -> str:
     occurred_at   = payload.get("occurredAt", "N/A")
     setting_name  = payload.get("alertData", {}).get("name", "N/A")
     setting_url   = payload.get("alertData", {}).get("url", "")
-    tz_offset     = RuntimeLoader().TZ_OFFSET
+    tz_offset     = get_runtime_env().TZ_OFFSET
 
     # Build setting link if URL fragment exists
     setting_link = (

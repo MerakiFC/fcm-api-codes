@@ -1,6 +1,6 @@
 from src.converters import epoch_to_aest, utc_iso_to_tz_offset
 from src.exceptions import HTTPRequestExceptionError, InvalidPayloadExceptionError
-from src.handler import RuntimeLoader
+from src.handler import get_runtime_env, RuntimeEnv
 from src.mv_api_tasks import img_file_path
 from requests_toolbelt import MultipartEncoder
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class SenderLoader():
     def __init__(self):
-        self.tx_runtime = RuntimeLoader()
+        self.tx_runtime = get_runtime_env()
         self.WX_TOKEN = self.tx_runtime.WX_TOKEN
         self.WX_ROOM_ID = self.tx_runtime.WX_ROOM_ID
         self.WX_API_URL = self.tx_runtime.WX_API_URL
@@ -46,7 +46,7 @@ def process_image_file(file_path: str) -> bytes:
 
 #This function will perform the Webex POST. Input:? Return: Webex response body
 def outbox_with_img_attach(md_body, timestamp_epoch):
-    tx_runtime = RuntimeLoader()
+    tx_runtime = get_runtime_env()
     file_name = f'{timestamp_epoch}.jpg'
     file_loc = img_file_path(file_name)
     attached_image = process_image_file(file_path=file_loc)
@@ -81,7 +81,7 @@ def outbox_with_img_attach(md_body, timestamp_epoch):
         raise HTTPRequestExceptionError(status_code=response.status_code, detail=response.get('error'))
     
 def outbox_str_only(md_body):
-    tx_runtime = RuntimeLoader()
+    tx_runtime = get_runtime_env()
     
     mp_payload: MultipartEncoder = MultipartEncoder(
                 {

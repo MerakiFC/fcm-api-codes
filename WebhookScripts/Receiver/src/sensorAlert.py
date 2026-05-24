@@ -1,4 +1,4 @@
-from src.handler import RuntimeLoader
+from src.handler import get_runtime_env
 from src.converters import epoch_to_utc_iso, utc_iso_to_tz_offset
 import src.wxSender as wxSender
 import logging
@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class SensorAlertSender:
     def __init__(self, payload:dict):
-        runtime_env = RuntimeLoader()
+        runtime_env = get_runtime_env()
         self.TZ_OFFSET = (int(runtime_env.TZ_OFFSET))
         self.device_name : str = payload.get('deviceName')
         self.alert_type : str = payload.get('alertType')
