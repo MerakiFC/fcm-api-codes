@@ -4,6 +4,7 @@
 *test*
 legacy*
 .DS_Store
+.coverage
 WebhookScripts/Guides/
 WebhookScripts/Payload/
 WebhookScripts/*.json
@@ -13,3 +14,4 @@ wh_rcvr/
 fastapi/
 *vFastTest/
 *dev*
+*old*
